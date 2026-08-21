@@ -36,7 +36,7 @@
             overflow: hidden;
         }
 
-        /* Titlebar & Header */
+        /* Header */
         .header {
             background-color: var(--card-bg);
             border-bottom: 1px solid var(--border-color);
@@ -53,7 +53,7 @@
             letter-spacing: 1px;
         }
 
-        /* Navigation Tabs */
+        /* Tabs */
         .tabs {
             display: flex;
             background-color: #0b1120;
@@ -87,7 +87,7 @@
             background-color: var(--primary);
         }
 
-        /* Main Container */
+        /* Main Content */
         .main-content {
             flex: 1;
             padding: 20px;
@@ -136,7 +136,7 @@
         .btn-success { background: var(--success); color: white; }
         .btn-danger { background: var(--danger); color: white; }
 
-        /* Data Tables */
+        /* Table */
         .table-container {
             background: var(--card-bg);
             border-radius: 8px;
@@ -162,8 +162,51 @@
             text-transform: uppercase;
         }
 
-        tr:last-child td {
-            border-bottom: none;
+        /* Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-card {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 10px;
+            width: 350px;
+            border: 1px solid var(--border-color);
+        }
+
+        .modal-card h3 {
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+
+        .modal-card .form-control {
+            margin-bottom: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .modal-card label {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .modal-card input {
+            width: 100%;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 15px;
         }
     </style>
 </head>
@@ -179,18 +222,18 @@
 
     <!-- Navigation Tabs -->
     <div class="tabs">
-        <button class="tab-btn active" onclick="openTab('cari')"><i class="fas fa-users"></i> Cari Liste</button>
-        <button class="tab-btn" onclick="openTab('urun')"><i class="fas fa-boxes"></i> Ürün Yönetimi</button>
+        <button class="tab-btn active" onclick="openTab('cari', event)"><i class="fas fa-users"></i> Cari Liste</button>
+        <button class="tab-btn" onclick="openTab('urun', event)"><i class="fas fa-boxes"></i> Ürün Yönetimi</button>
     </div>
 
-    <!-- Content Area -->
+    <!-- Main Content -->
     <div class="main-content">
         
-        <!-- Cari Liste Sekmesi -->
+        <!-- Cari Liste Tab -->
         <div id="cariPane" class="tab-pane active">
             <div class="input-group">
-                <input type="text" placeholder="Müşteri Ara..." style="flex: 1;">
-                <button class="btn btn-primary"><i class="fas fa-plus"></i> Yeni Müşteri</button>
+                <input type="text" id="musteriAraInput" onkeyup="musteriAra()" placeholder="Müşteri Ara..." style="flex: 1;">
+                <button class="btn btn-primary" onclick="modalAc()"><i class="fas fa-plus"></i> Yeni Müşteri</button>
             </div>
 
             <div class="table-container">
@@ -203,21 +246,14 @@
                             <th>İşlemler</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr>
-                            <td>Örnek Müşteri</td>
-                            <td>0555 555 55 55</td>
-                            <td style="color: var(--danger); font-weight: 600;">₺250.00</td>
-                            <td>
-                                <button class="btn btn-primary" style="padding: 4px 8px; font-size: 12px;">Detay</button>
-                            </td>
-                        </tr>
+                    <tbody id="musteriTabloBody">
+                        <!-- JavaScript ile dinamik dolacak -->
                     </tbody>
                 </table>
             </div>
         </div>
 
-        <!-- Ürün Yönetimi Sekmesi -->
+        <!-- Ürün Yönetimi Tab -->
         <div id="urunPane" class="tab-pane">
             <div class="input-group">
                 <input type="text" placeholder="Barkod veya Ürün Adı..." style="flex: 1;">
@@ -251,19 +287,131 @@
 
     </div>
 
+    <!-- Müşteri Ekleme Modalı -->
+    <div class="modal-overlay" id="musteriModal">
+        <div class="modal-card">
+            <h3><i class="fas fa-user-plus"></i> Yeni Müşteri Ekle</h3>
+            <div class="form-control">
+                <label>Müşteri Adı / Unvanı</label>
+                <input type="text" id="yeniAd" placeholder="Örn: Ahmet Yılmaz">
+            </div>
+            <div class="form-control">
+                <label>Telefon Numarası</label>
+                <input type="text" id="yeniTel" placeholder="Örn: 05xx xxx xx xx">
+            </div>
+            <div class="form-control">
+                <label>Başlangıç Borcu (₺)</label>
+                <input type="number" id="yeniBakiye" value="0">
+            </div>
+            <div class="modal-actions">
+                <button class="btn" style="background:#475569; color:white;" onclick="modalKapat()">İptal</button>
+                <button class="btn btn-primary" onclick="musteriKaydet()">Kaydet</button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        function openTab(tabName) {
-            var i, tabcontent, tablinks;
-            tabcontent = document.getElementsByClassName("tab-pane");
-            for (i = 0; i < tabcontent.length; i++) {
+        // Müşteri Veri Deposu (LocalStorage)
+        let musteriler = JSON.parse(localStorage.getItem('mmk_musteriler')) || [
+            { id: 1, ad: "Örnek Müşteri", tel: "0555 555 55 55", bakiye: 250.00 }
+        ];
+
+        // Sayfa Yüklendiğinde
+        window.onload = function() {
+            tabloGuncelle();
+        };
+
+        // Tab Değiştirme
+        function openTab(tabName, evt) {
+            let tabcontent = document.getElementsByClassName("tab-pane");
+            for (let i = 0; i < tabcontent.length; i++) {
                 tabcontent[i].classList.remove("active");
             }
-            tablinks = document.getElementsByClassName("tab-btn");
-            for (i = 0; i < tablinks.length; i++) {
+            let tablinks = document.getElementsByClassName("tab-btn");
+            for (let i = 0; i < tablinks.length; i++) {
                 tablinks[i].classList.remove("active");
             }
             document.getElementById(tabName + "Pane").classList.add("active");
-            event.currentTarget.classList.add("active");
+            evt.currentTarget.classList.add("active");
+        }
+
+        // Modal İşlemleri
+        function modalAc() {
+            document.getElementById('musteriModal').style.display = 'flex';
+        }
+
+        function modalKapat() {
+            document.getElementById('musteriModal').style.display = 'none';
+            document.getElementById('yeniAd').value = '';
+            document.getElementById('yeniTel').value = '';
+            document.getElementById('yeniBakiye').value = '0';
+        }
+
+        // Yeni Müşteri Kaydet
+        function musteriKaydet() {
+            let ad = document.getElementById('yeniAd').value.trim();
+            let tel = document.getElementById('yeniTel').value.trim();
+            let bakiye = parseFloat(document.getElementById('yeniBakiye').value) || 0;
+
+            if (ad === "") {
+                alert("Lütfen müşteri adını giriniz!");
+                return;
+            }
+
+            let yeniMusteri = {
+                id: Date.now(),
+                ad: ad,
+                tel: tel || "-",
+                bakiye: bakiye
+            };
+
+            musteriler.push(yeniMusteri);
+            localStorage.setItem('mmk_musteriler', JSON.stringify(musteriler));
+
+            tabloGuncelle();
+            modalKapat();
+        }
+
+        // Müşteri Sil
+        function musteriSil(id) {
+            if (confirm("Bu müşteriyi silmek istediğinize emin misiniz?")) {
+                musteriler = musteriler.filter(m => m.id !== id);
+                localStorage.setItem('mmk_musteriler', JSON.stringify(musteriler));
+                tabloGuncelle();
+            }
+        }
+
+        // Tabloyu Ekrana Yazma
+        function tabloGuncelle(liste = musteriler) {
+            let tbody = document.getElementById('musteriTabloBody');
+            tbody.innerHTML = '';
+
+            if (liste.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:var(--text-muted);">Kayıtlı müşteri bulunamadı.</td></tr>`;
+                return;
+            }
+
+            liste.forEach(m => {
+                let tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${m.ad}</td>
+                    <td>${m.tel}</td>
+                    <td style="color: ${m.bakiye > 0 ? 'var(--danger)' : 'var(--success)'}; font-weight: 600;">₺${parseFloat(m.bakiye).toFixed(2)}</td>
+                    <td>
+                        <button class="btn btn-danger" style="padding: 4px 8px; font-size: 12px;" onclick="musteriSil(${m.id})">Sil</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Arama Fonksiyonu
+        function musteriAra() {
+            let kelime = document.getElementById('musteriAraInput').value.toLowerCase();
+            let filtrelenmis = musteriler.filter(m => 
+                m.ad.toLowerCase().includes(kelime) || m.tel.includes(kelime)
+            );
+            tabloGuncelle(filtrelenmis);
         }
     </script>
 </body>
