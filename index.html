@@ -1,125 +1,270 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MMK Veresiye Takip Programı</title>
-<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Roboto+Mono:wght@400;500;700&family=Exo+2:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<!-- Supabase SDK -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<style>
-:root {
-  --bg: #0e1a2e;
-  --bg2: #112240;
-  --bg3: #0a1628;
-  --panel: #152a4a;
-  --panel2: #1a3358;
-  --border: #1e3a5f;
-  --border2: #2a4f7a;
-  --blue: #1565c0;
-  --blue2: #1976d2;
-  --blue-bright: #42a5f5;
-  --accent: #2196f3;
-  --red: #ef5350;
-  --red2: #e53935;
-  --green: #43a047;
-  --green2: #66bb6a;
-  --white: #e8f4ff;
-  --text: #cfe2f3;
-  --text-muted: #6a8aaa;
-  --cell-red: #ff4444;
-  --cell-blue: #42a5f5;
-  --cell-black: #dce8f5;
-  --header-bg: #1a2f4a;
-  --row-hover: rgba(33,150,243,0.08);
-  --row-selected: rgba(33,150,243,0.18);
-  --input-bg: #0d1e33;
-  --input-border: #1e3a5f;
-  --headerH: 138px;
-}
-* { margin:0; padding:0; box-sizing:border-box; }
-html, body { width:100%; height:100%; overflow:hidden; font-family:'Exo 2',sans-serif; background:var(--bg); color:var(--text); }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MMK Veresiye Takip Programı</title>
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;600;700&family=Oswald:wght@500;600;700&family=Roboto+Mono:wght@400;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg-dark: #0f172a;
+            --card-bg: #1e293b;
+            --border-color: #334155;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+        }
 
-/* TITLEBAR */
-.titlebar { background:linear-gradient(90deg,#0a1628,#112240); border-bottom:2px solid var(--blue); padding:10px 16px; display:flex; align-items:center; gap:14px; user-select:none; }
-.titlebar-texts { display:flex; flex-direction:column; }
-.titlebar-market { font-family:'Oswald',sans-serif; font-size:22px; font-weight:700; color:#fff; letter-spacing:3px; text-transform:uppercase; line-height:1; }
-.titlebar-title { font-family:'Exo 2',sans-serif; font-size:11px; font-weight:400; color:var(--text-muted); letter-spacing:1px; margin-top:2px; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
 
-/* LOADING */
-.loading-overlay { display:flex; position:fixed; inset:0; background:rgba(10,22,40,.95); z-index:9000; align-items:center; justify-content:center; flex-direction:column; gap:16px; }
-.spinner { width:42px; height:42px; border:4px solid var(--border2); border-top-color:var(--blue-bright); border-radius:50%; animation:spin .8s linear infinite; }
-@keyframes spin { to{transform:rotate(360deg)} }
-.loading-text { font-family:'Oswald',sans-serif; font-size:16px; color:var(--blue-bright); letter-spacing:1px; }
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
 
-/* GEÇERSİZ MÜŞTERİ BİLDİRİMİ */
-.error-box { display:none; position:fixed; inset:0; background:#0e1a2e; z-index:9999; align-items:center; justify-content:center; flex-direction:column; gap:12px; color:var(--red); font-family:'Oswald',sans-serif; text-align:center; padding:20px; }
-</style>
+        /* Titlebar & Header */
+        .header {
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand-title {
+            font-family: 'Oswald', sans-serif;
+            font-size: 20px;
+            color: var(--primary);
+            letter-spacing: 1px;
+        }
+
+        /* Navigation Tabs */
+        .tabs {
+            display: flex;
+            background-color: #0b1120;
+            padding: 5px 20px;
+            gap: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tab-btn:hover {
+            color: var(--text-main);
+            background-color: var(--card-bg);
+        }
+
+        .tab-btn.active {
+            color: white;
+            background-color: var(--primary);
+        }
+
+        /* Main Container */
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .tab-pane {
+            display: none;
+        }
+
+        .tab-pane.active {
+            display: block;
+        }
+
+        /* Forms & Inputs */
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        input, select {
+            background-color: var(--bg-dark);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 8px 12px;
+            border-radius: 6px;
+            outline: none;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--primary);
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-hover); }
+        .btn-success { background: var(--success); color: white; }
+        .btn-danger { background: var(--danger); color: white; }
+
+        /* Data Tables */
+        .table-container {
+            background: var(--card-bg);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th, td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background-color: #111827;
+            color: var(--text-muted);
+            font-size: 13px;
+            text-transform: uppercase;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+    </style>
 </head>
 <body>
 
-<div class="loading-overlay" id="loadingOverlay">
-  <div class="spinner"></div>
-  <div class="loading-text" id="loadingText">Sistem Yükleniyor...</div>
-</div>
+    <!-- Header -->
+    <div class="header">
+        <div class="brand-title"><i class="fas fa-file-invoice-dollar"></i> MMK VERESİYE TAKİP</div>
+        <div id="user-status" style="font-size: 14px; color: var(--text-muted);">
+            <i class="fas fa-user-circle"></i> Yönetici
+        </div>
+    </div>
 
-<div class="error-box" id="errorBox">
-  <h1 style="font-size:32px;">GEÇERSİZ MÜŞTERİ VEYA LİSANS SÜRESİ DOLDU</h1>
-  <p style="color:var(--text); font-family:'Exo 2',sans-serif;">Lütfen geçerli bir müşteri bağlantısı ile tekrar giriş yapın.</p>
-</div>
+    <!-- Navigation Tabs -->
+    <div class="tabs">
+        <button class="tab-btn active" onclick="openTab('cari')"><i class="fas fa-users"></i> Cari Liste</button>
+        <button class="tab-btn" onclick="openTab('urun')"><i class="fas fa-boxes"></i> Ürün Yönetimi</button>
+    </div>
 
-<!-- DÜKKAN BAŞLIĞI -->
-<div class="titlebar">
-  <div class="titlebar-texts">
-    <div class="titlebar-market" id="lblDukkanAdi">YÜKLENİYOR...</div>
-    <div class="titlebar-title">MMK Veresiye Takip Programı - Bulut Sürümü</div>
-  </div>
-</div>
+    <!-- Content Area -->
+    <div class="main-content">
+        
+        <!-- Cari Liste Sekmesi -->
+        <div id="cariPane" class="tab-pane active">
+            <div class="input-group">
+                <input type="text" placeholder="Müşteri Ara..." style="flex: 1;">
+                <button class="btn btn-primary"><i class="fas fa-plus"></i> Yeni Müşteri</button>
+            </div>
 
-<script>
-  // SUPABASE BAĞLANTI BİLGİLERİ
-  const SUPABASE_URL = 'https://bglukkhsvongxgrbccdz.supabase.co';
-  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJnbHVra2hzdm9uZ3hncmJjY2R6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODczMDQ1MDksImV4cCI6MjEwMjg4MDUwOX0.8YEQ0B-wdPXTeNuNIfElikrFu2zbb4Voi0eoL5aviM0';
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Müşteri Adı</th>
+                            <th>Telefon</th>
+                            <th>Bakiye</th>
+                            <th>İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Örnek Müşteri</td>
+                            <td>0555 555 55 55</td>
+                            <td style="color: var(--danger); font-weight: 600;">₺250.00</td>
+                            <td>
+                                <button class="btn btn-primary" style="padding: 4px 8px; font-size: 12px;">Detay</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
 
-  const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-  
-  let aktifDukkan = null;
+        <!-- Ürün Yönetimi Sekmesi -->
+        <div id="urunPane" class="tab-pane">
+            <div class="input-group">
+                <input type="text" placeholder="Barkod veya Ürün Adı..." style="flex: 1;">
+                <input type="number" placeholder="Fiyat" style="width: 120px;">
+                <button class="btn btn-success"><i class="fas fa-plus"></i> Ürün Ekle</button>
+            </div>
 
-  // URL'DEN MÜŞTERİ KODUNU AL VE DÜKKAN BİLGİSİNİ GETİR
-  async function dukkaniBaslat() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const dukkanKodu = urlParams.get('d') || 'sen-bakkal'; // Varsayılan test dükkanı: sen-bakkal
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Barkod</th>
+                            <th>Ürün Adı</th>
+                            <th>Fiyat</th>
+                            <th>İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>8690000000000</td>
+                            <td>Örnek Ürün</td>
+                            <td>₺15.00</td>
+                            <td>
+                                <button class="btn btn-danger" style="padding: 4px 8px; font-size: 12px;">Sil</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
 
-    try {
-      let { data: dukkan, error } = await supabaseClient
-        .from('dukkanlar')
-        .select('*')
-        .eq('kod', dukkanKodu)
-        .eq('aktif', true)
-        .single();
+    </div>
 
-      if (error || !dukkan) {
-        document.getElementById('loadingOverlay').style.display = 'none';
-        document.getElementById('errorBox').style.display = 'flex';
-        return;
-      }
-
-      // Dükkan başarıyla doğrulandı
-      aktifDukkan = dukkan;
-      document.getElementById('lblDukkanAdi').innerText = dukkan.baslik;
-      document.title = dukkan.baslik + " - MMK Veresiye Takip";
-
-      setTimeout(() => {
-        document.getElementById('loadingOverlay').style.display = 'none';
-      }, 500);
-
-    } catch (err) {
-      console.error("Bağlantı hatası:", err);
-    }
-  }
-
-  window.addEventListener('DOMContentLoaded', dukkaniBaslat);
-</script>
-
+    <script>
+        function openTab(tabName) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tab-pane");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].classList.remove("active");
+            }
+            tablinks = document.getElementsByClassName("tab-btn");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].classList.remove("active");
+            }
+            document.getElementById(tabName + "Pane").classList.add("active");
+            event.currentTarget.classList.add("active");
+        }
+    </script>
 </body>
 </html>
