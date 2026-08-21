@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MMK Veresiye Takip Programı</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Roboto+Mono:wght@400;500;700&family=Exo+2:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<!-- Supabase SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root {
+  --bg: #0e1a2e;
+  --bg2: #112240;
+  --bg3: #0a1628;
+  --panel: #152a4a;
+  --panel2: #1a3358;
+  --border: #1e3a5f;
+  --border2: #2a4f7a;
+  --blue: #1565c0;
+  --blue2: #1976d2;
+  --blue-bright: #42a5f5;
+  --accent: #2196f3;
+  --red: #ef5350;
+  --red2: #e53935;
+  --green: #43a047;
+  --green2: #66bb6a;
+  --white: #e8f4ff;
+  --text: #cfe2f3;
+  --text-muted: #6a8aaa;
+  --cell-red: #ff4444;
+  --cell-blue: #42a5f5;
+  --cell-black: #dce8f5;
+  --header-bg: #1a2f4a;
+  --row-hover: rgba(33,150,243,0.08);
+  --row-selected: rgba(33,150,243,0.18);
+  --input-bg: #0d1e33;
+  --input-border: #1e3a5f;
+  --headerH: 138px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html, body { width:100%; height:100%; overflow:hidden; font-family:'Exo 2',sans-serif; background:var(--bg); color:var(--text); }
+
+/* TITLEBAR */
+.titlebar { background:linear-gradient(90deg,#0a1628,#112240); border-bottom:2px solid var(--blue); padding:10px 16px; display:flex; align-items:center; gap:14px; user-select:none; }
+.titlebar-texts { display:flex; flex-direction:column; }
+.titlebar-market { font-family:'Oswald',sans-serif; font-size:22px; font-weight:700; color:#fff; letter-spacing:3px; text-transform:uppercase; line-height:1; }
+.titlebar-title { font-family:'Exo 2',sans-serif; font-size:11px; font-weight:400; color:var(--text-muted); letter-spacing:1px; margin-top:2px; }
+
+/* LOADING */
+.loading-overlay { display:flex; position:fixed; inset:0; background:rgba(10,22,40,.95); z-index:9000; align-items:center; justify-content:center; flex-direction:column; gap:16px; }
+.spinner { width:42px; height:42px; border:4px solid var(--border2); border-top-color:var(--blue-bright); border-radius:50%; animation:spin .8s linear infinite; }
+@keyframes spin { to{transform:rotate(360deg)} }
+.loading-text { font-family:'Oswald',sans-serif; font-size:16px; color:var(--blue-bright); letter-spacing:1px; }
+
+/* GEÇERSİZ MÜŞTERİ BİLDİRİMİ */
+.error-box { display:none; position:fixed; inset:0; background:#0e1a2e; z-index:9999; align-items:center; justify-content:center; flex-direction:column; gap:12px; color:var(--red); font-family:'Oswald',sans-serif; text-align:center; padding:20px; }
+</style>
+</head>
+<body>
+
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="spinner"></div>
+  <div class="loading-text" id="loadingText">Sistem Yükleniyor...</div>
+</div>
+
+<div class="error-box" id="errorBox">
+  <h1 style="font-size:32px;">GEÇERSİZ MÜŞTERİ VEYA LİSANS SÜRESİ DOLDU</h1>
+  <p style="color:var(--text); font-family:'Exo 2',sans-serif;">Lütfen geçerli bir müşteri bağlantısı ile tekrar giriş yapın.</p>
+</div>
+
+<!-- DÜKKAN BAŞLIĞI -->
+<div class="titlebar">
+  <div class="titlebar-texts">
+    <div class="titlebar-market" id="lblDukkanAdi">YÜKLENİYOR...</div>
+    <div class="titlebar-title">MMK Veresiye Takip Programı - Bulut Sürümü</div>
+  </div>
+</div>
+
+<script>
+  // SUPABASE BAĞLANTI BİLGİLERİ
+  const SUPABASE_URL = 'https://bglukkhsvongxgrbccdz.supabase.co';
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJnbHVra2hzdm9uZ3hncmJjY2R6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODczMDQ1MDksImV4cCI6MjEwMjg4MDUwOX0.8YEQ0B-wdPXTeNuNIfElikrFu2zbb4Voi0eoL5aviM0';
+
+  const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  
+  let aktifDukkan = null;
+
+  // URL'DEN MÜŞTERİ KODUNU AL VE DÜKKAN BİLGİSİNİ GETİR
+  async function dukkaniBaslat() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const dukkanKodu = urlParams.get('d') || 'sen-bakkal'; // Varsayılan test dükkanı: sen-bakkal
+
+    try {
+      let { data: dukkan, error } = await supabaseClient
+        .from('dukkanlar')
+        .select('*')
+        .eq('kod', dukkanKodu)
+        .eq('aktif', true)
+        .single();
+
+      if (error || !dukkan) {
+        document.getElementById('loadingOverlay').style.display = 'none';
+        document.getElementById('errorBox').style.display = 'flex';
+        return;
+      }
+
+      // Dükkan başarıyla doğrulandı
+      aktifDukkan = dukkan;
+      document.getElementById('lblDukkanAdi').innerText = dukkan.baslik;
+      document.title = dukkan.baslik + " - MMK Veresiye Takip";
+
+      setTimeout(() => {
+        document.getElementById('loadingOverlay').style.display = 'none';
+      }, 500);
+
+    } catch (err) {
+      console.error("Bağlantı hatası:", err);
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', dukkaniBaslat);
+</script>
+
+</body>
+</html>
