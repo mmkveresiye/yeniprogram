@@ -988,8 +988,8 @@ table.detay-table tbody td { padding:9px 12px; border-right:1px solid rgba(30,58
 <script>
 // 1. SUPABASE İSTEMCİSİ TANIMI
 // Kendi Supabase URL ve Anon Key bilgilerinizi buraya kontrol ediniz.
-const SUPA_URL = 'https://jmpyjudzpxijmpuhatxy.supabase.co';
-const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImptcHlqdWR6cHhpam1wdWhhdHh5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4MDY2MDAsImV4cCI6MjA5NDM4MjYwMH0.wNDXV46Bsxn7-PtovsFD2wsrhuQKpya8S7V8mui4jbc';
+const SUPA_URL = 'https://bglukkhsvongxgrbccdz.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJnbHVra2hzdm9uZ3hncmJjY2R6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODczMDQ1MDksImV4cCI6MjEwMjg4MDUwOX0.8YEQ0B-wdPXTeNuNIfElikrFu2zbb4Voi0eoL5aviM0';
 
 const supabaseClient = window.supabase.createClient(SUPA_URL, SUPA_KEY);
 
@@ -1055,10 +1055,29 @@ async function loginDene() {
 
   loading(true, 'Giriş yapılıyor...');
   try {
-    const { data, error } = await supabaseClient.auth.signInWithPassword({
+    let { data, error } = await supabaseClient.auth.signInWithPassword({
       email: email,
       password: pass
     });
+
+    // İlk kurulum: Eğer admin kullanıcısı henüz auth.users içinde yoksa otomatik oluştur
+    if (error && (userOrEmail.toLowerCase() === 'admin' || email === 'admin@veresiye.local')) {
+      const su = await supabaseClient.auth.signUp({
+        email: 'admin@veresiye.local',
+        password: pass,
+        options: {
+          data: {
+            username: 'admin',
+            business_name: 'Sistem Yöneticisi',
+            owner_name: 'Yönetici'
+          }
+        }
+      });
+      if (!su.error && su.data.user) {
+        data = su.data;
+        error = null;
+      }
+    }
 
     if (error) {
       errEl.textContent = 'Kullanıcı adı veya şifre hatalı!';
