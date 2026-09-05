@@ -1,418 +1,46 @@
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MMK Veresiye Takip Programı</title>
-    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;600;700&family=Oswald:wght@500;600;700&family=Roboto+Mono:wght@400;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root {
-            --primary: #2563eb;
-            --primary-hover: #1d4ed8;
-            --bg-dark: #0f172a;
-            --card-bg: #1e293b;
-            --border-color: #334155;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --success: #10b981;
-            --danger: #ef4444;
-            --warning: #f59e0b;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Inter', sans-serif;
-        }
-
-        body {
-            background-color: var(--bg-dark);
-            color: var(--text-main);
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-
-        /* Header */
-        .header {
-            background-color: var(--card-bg);
-            border-bottom: 1px solid var(--border-color);
-            padding: 10px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .brand-title {
-            font-family: 'Oswald', sans-serif;
-            font-size: 20px;
-            color: var(--primary);
-            letter-spacing: 1px;
-        }
-
-        /* Tabs */
-        .tabs {
-            display: flex;
-            background-color: #0b1120;
-            padding: 5px 20px;
-            gap: 10px;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .tab-btn {
-            background: transparent;
-            border: none;
-            color: var(--text-muted);
-            padding: 10px 20px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            border-radius: 6px;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .tab-btn:hover {
-            color: var(--text-main);
-            background-color: var(--card-bg);
-        }
-
-        .tab-btn.active {
-            color: white;
-            background-color: var(--primary);
-        }
-
-        /* Main Content */
-        .main-content {
-            flex: 1;
-            padding: 20px;
-            overflow-y: auto;
-        }
-
-        .tab-pane {
-            display: none;
-        }
-
-        .tab-pane.active {
-            display: block;
-        }
-
-        /* Forms & Inputs */
-        .input-group {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-
-        input, select {
-            background-color: var(--bg-dark);
-            border: 1px solid var(--border-color);
-            color: var(--text-main);
-            padding: 8px 12px;
-            border-radius: 6px;
-            outline: none;
-        }
-
-        input:focus, select:focus {
-            border-color: var(--primary);
-        }
-
-        .btn {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 6px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .btn-primary { background: var(--primary); color: white; }
-        .btn-primary:hover { background: var(--primary-hover); }
-        .btn-success { background: var(--success); color: white; }
-        .btn-danger { background: var(--danger); color: white; }
-
-        /* Table */
-        .table-container {
-            background: var(--card-bg);
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            overflow: hidden;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            text-align: left;
-        }
-
-        th, td {
-            padding: 12px 16px;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        th {
-            background-color: #111827;
-            color: var(--text-muted);
-            font-size: 13px;
-            text-transform: uppercase;
-        }
-
-        /* Modal Styles */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.7);
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-
-        .modal-card {
-            background: var(--card-bg);
-            padding: 20px;
-            border-radius: 10px;
-            width: 350px;
-            border: 1px solid var(--border-color);
-        }
-
-        .modal-card h3 {
-            margin-bottom: 15px;
-            color: var(--primary);
-        }
-
-        .modal-card .form-control {
-            margin-bottom: 12px;
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-
-        .modal-card label {
-            font-size: 12px;
-            color: var(--text-muted);
-        }
-
-        .modal-card input {
-            width: 100%;
-        }
-
-        .modal-actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-            margin-top: 15px;
-        }
-    </style>
-</head>
-<body>
-
-    <!-- Header -->
-    <div class="header">
-        <div class="brand-title"><i class="fas fa-file-invoice-dollar"></i> MMK VERESİYE TAKİP</div>
-        <div id="user-status" style="font-size: 14px; color: var(--text-muted);">
-            <i class="fas fa-user-circle"></i> Yönetici
+  setTimeout(async () => {
+    let query = supabaseClient.from('hareketler').select('*');
+    if (inspectingTenantId) query = query.eq('user_id', inspectingTenantId);
+    const { data } = await query;
+    const bugunHareketler = (data || []).filter(h => h.tarih && h.tarih.startsWith(bugun));
+    const tB = bugunHareketler.reduce((t, h) => t + Number(h.borc), 0);
+    const tT = bugunHareketler.reduce((t, h) => t + Number(h.tahsilat), 0);
+    document.getElementById('raporBody').innerHTML = `
+      <div style="display:flex;gap:16px;margin-bottom:14px;">
+        <div style="flex:1;background:rgba(239,83,80,.12);padding:12px;border-radius:6px;text-align:center;">
+          <div style="font-size:11px;color:var(--text-muted);">GÜNLÜK TOPLAM BORÇ</div>
+          <div style="font-size:20px;font-weight:700;color:#ff4444;font-family:monospace;">${fmt(tB)} ₺</div>
         </div>
-    </div>
-
-    <!-- Navigation Tabs -->
-    <div class="tabs">
-        <button class="tab-btn active" onclick="openTab('cari', event)"><i class="fas fa-users"></i> Cari Liste</button>
-        <button class="tab-btn" onclick="openTab('urun', event)"><i class="fas fa-boxes"></i> Ürün Yönetimi</button>
-    </div>
-
-    <!-- Main Content -->
-    <div class="main-content">
-        
-        <!-- Cari Liste Tab -->
-        <div id="cariPane" class="tab-pane active">
-            <div class="input-group">
-                <input type="text" id="musteriAraInput" onkeyup="musteriAra()" placeholder="Müşteri Ara..." style="flex: 1;">
-                <button class="btn btn-primary" onclick="modalAc()"><i class="fas fa-plus"></i> Yeni Müşteri</button>
-            </div>
-
-            <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Müşteri Adı</th>
-                            <th>Telefon</th>
-                            <th>Bakiye</th>
-                            <th>İşlemler</th>
-                        </tr>
-                    </thead>
-                    <tbody id="musteriTabloBody">
-                        <!-- JavaScript ile dinamik dolacak -->
-                    </tbody>
-                </table>
-            </div>
+        <div style="flex:1;background:rgba(67,160,71,.12);padding:12px;border-radius:6px;text-align:center;">
+          <div style="font-size:11px;color:var(--text-muted);">GÜNLÜK TOPLAM TAHSİLAT</div>
+          <div style="font-size:20px;font-weight:700;color:#66bb6a;font-family:monospace;">${fmt(tT)} ₺</div>
         </div>
-
-        <!-- Ürün Yönetimi Tab -->
-        <div id="urunPane" class="tab-pane">
-            <div class="input-group">
-                <input type="text" placeholder="Barkod veya Ürün Adı..." style="flex: 1;">
-                <input type="number" placeholder="Fiyat" style="width: 120px;">
-                <button class="btn btn-success"><i class="fas fa-plus"></i> Ürün Ekle</button>
-            </div>
-
-            <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Barkod</th>
-                            <th>Ürün Adı</th>
-                            <th>Fiyat</th>
-                            <th>İşlemler</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>8690000000000</td>
-                            <td>Örnek Ürün</td>
-                            <td>₺15.00</td>
-                            <td>
-                                <button class="btn btn-danger" style="padding: 4px 8px; font-size: 12px;">Sil</button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-    </div>
-
-    <!-- Müşteri Ekleme Modalı -->
-    <div class="modal-overlay" id="musteriModal">
-        <div class="modal-card">
-            <h3><i class="fas fa-user-plus"></i> Yeni Müşteri Ekle</h3>
-            <div class="form-control">
-                <label>Müşteri Adı / Unvanı</label>
-                <input type="text" id="yeniAd" placeholder="Örn: Ahmet Yılmaz">
-            </div>
-            <div class="form-control">
-                <label>Telefon Numarası</label>
-                <input type="text" id="yeniTel" placeholder="Örn: 05xx xxx xx xx">
-            </div>
-            <div class="form-control">
-                <label>Başlangıç Borcu (₺)</label>
-                <input type="number" id="yeniBakiye" value="0">
-            </div>
-            <div class="modal-actions">
-                <button class="btn" style="background:#475569; color:white;" onclick="modalKapat()">İptal</button>
-                <button class="btn btn-primary" onclick="musteriKaydet()">Kaydet</button>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // Müşteri Veri Deposu (LocalStorage)
-        let musteriler = JSON.parse(localStorage.getItem('mmk_musteriler')) || [
-            { id: 1, ad: "Örnek Müşteri", tel: "0555 555 55 55", bakiye: 250.00 }
-        ];
-
-        // Sayfa Yüklendiğinde
-        window.onload = function() {
-            tabloGuncelle();
-        };
-
-        // Tab Değiştirme
-        function openTab(tabName, evt) {
-            let tabcontent = document.getElementsByClassName("tab-pane");
-            for (let i = 0; i < tabcontent.length; i++) {
-                tabcontent[i].classList.remove("active");
-            }
-            let tablinks = document.getElementsByClassName("tab-btn");
-            for (let i = 0; i < tablinks.length; i++) {
-                tablinks[i].classList.remove("active");
-            }
-            document.getElementById(tabName + "Pane").classList.add("active");
-            evt.currentTarget.classList.add("active");
-        }
-
-        // Modal İşlemleri
-        function modalAc() {
-            document.getElementById('musteriModal').style.display = 'flex';
-        }
-
-        function modalKapat() {
-            document.getElementById('musteriModal').style.display = 'none';
-            document.getElementById('yeniAd').value = '';
-            document.getElementById('yeniTel').value = '';
-            document.getElementById('yeniBakiye').value = '0';
-        }
-
-        // Yeni Müşteri Kaydet
-        function musteriKaydet() {
-            let ad = document.getElementById('yeniAd').value.trim();
-            let tel = document.getElementById('yeniTel').value.trim();
-            let bakiye = parseFloat(document.getElementById('yeniBakiye').value) || 0;
-
-            if (ad === "") {
-                alert("Lütfen müşteri adını giriniz!");
-                return;
-            }
-
-            let yeniMusteri = {
-                id: Date.now(),
-                ad: ad,
-                tel: tel || "-",
-                bakiye: bakiye
-            };
-
-            musteriler.push(yeniMusteri);
-            localStorage.setItem('mmk_musteriler', JSON.stringify(musteriler));
-
-            tabloGuncelle();
-            modalKapat();
-        }
-
-        // Müşteri Sil
-        function musteriSil(id) {
-            if (confirm("Bu müşteriyi silmek istediğinize emin misiniz?")) {
-                musteriler = musteriler.filter(m => m.id !== id);
-                localStorage.setItem('mmk_musteriler', JSON.stringify(musteriler));
-                tabloGuncelle();
-            }
-        }
-
-        // Tabloyu Ekrana Yazma
-        function tabloGuncelle(liste = musteriler) {
-            let tbody = document.getElementById('musteriTabloBody');
-            tbody.innerHTML = '';
-
-            if (liste.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:var(--text-muted);">Kayıtlı müşteri bulunamadı.</td></tr>`;
-                return;
-            }
-
-            liste.forEach(m => {
-                let tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${m.ad}</td>
-                    <td>${m.tel}</td>
-                    <td style="color: ${m.bakiye > 0 ? 'var(--danger)' : 'var(--success)'}; font-weight: 600;">₺${parseFloat(m.bakiye).toFixed(2)}</td>
-                    <td>
-                        <button class="btn btn-danger" style="padding: 4px 8px; font-size: 12px;" onclick="musteriSil(${m.id})">Sil</button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        // Arama Fonksiyonu
-        function musteriAra() {
-            let kelime = document.getElementById('musteriAraInput').value.toLowerCase();
-            let filtrelenmis = musteriler.filter(m => 
-                m.ad.toLowerCase().includes(kelime) || m.tel.includes(kelime)
-            );
-            tabloGuncelle(filtrelenmis);
-        }
-    </script>
+      </div>
+      <table style="width:100%;border-collapse:collapse;font-size:13px;">
+        <thead>
+          <tr style="background:var(--header-bg);color:var(--blue-bright);">
+            <th style="padding:6px;text-align:left;">Müşteri Kod</th>
+            <th style="padding:6px;text-align:left;">Açıklama</th>
+            <th style="padding:6px;text-align:right;">Borç</th>
+            <th style="padding:6px;text-align:right;">Tahsilat</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${bugunHareketler.map(h => `
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:6px;">${h.cari_kod}</td>
+              <td style="padding:6px;">${h.aciklama || ''}</td>
+              <td style="padding:6px;text-align:right;color:#ff4444;">${fmt(h.borc)}</td>
+              <td style="padding:6px;text-align:right;color:#66bb6a;">${fmt(h.tahsilat)}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    `;
+  }, 200);
+}
+function raporKapat() { document.getElementById('raporOverlay').classList.remove('active'); }
+function dashboardAc() { alert('Detaylı istatistikler Dashboard ekranında görüntülenmektedir.'); }
+</script>
 </body>
 </html>
