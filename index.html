@@ -1741,8 +1741,8 @@ if ('serviceWorker' in navigator) {
 // ═══════════════════════════════════════════════════════
 // SUPABASE AYARLARI
 // ═══════════════════════════════════════════════════════
-const SUPA_URL = 'https://jmpyjudzpxijmpuhatxy.supabase.co';
-const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImptcHlqdWR6cHhpam1wdWhhdHh5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4MDY2MDAsImV4cCI6MjA5NDM4MjYwMH0.wNDXV46Bsxn7-PtovsFD2wsrhuQKpya8S7V8mui4jbc';
+const SUPA_URL = 'https://uyamkkybaiectfkkzzpt.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV5YW1ra3liYWllY3Rma2t6enB0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg2ODc5MzQsImV4cCI6MjEwNDI2MzkzNH0.bpeVXwNfQOwskJh-Ra1pEBBkjlWOZIBUtxPqofsOW1E';
 const HEADERS = { 'Content-Type':'application/json', 'apikey':SUPA_KEY, 'Authorization':'Bearer '+SUPA_KEY };
 
 // ═══════════════════════════════════════════════════════
@@ -1795,7 +1795,7 @@ async function adminLogin() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'apikey': SUPA_KEY },
       body: JSON.stringify({
-        email: username + '@admin.local',
+        email: username + '@veresiye.local',
         password: password
       })
     });
@@ -1840,7 +1840,7 @@ async function customerLogin() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'apikey': SUPA_KEY },
       body: JSON.stringify({
-        email: username + '@customer.local',
+        email: username + '@veresiye.local',
         password: password
       })
     });
