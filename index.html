@@ -1780,6 +1780,63 @@ function showError(elementId, message) {
   el.classList.add('show');
 }
 
+// ═══ GLOBAL DEĞIŞKENLER ═══
+let currentUser = null;
+let currentUserRole = null;
+let currentCustomerKod = null;
+
+// Müşteri panelini aç
+async function showCustomerPanel() {
+  // Tüm tab'ları gizle
+  document.querySelectorAll('.tab-button').forEach(btn => {
+    btn.classList.remove('active');
+  });
+  
+  // Sadece "CARİ" tabını göster
+  const cariTab = document.querySelector('[data-tab="cari"]');
+  if (cariTab) {
+    cariTab.classList.add('active');
+    document.getElementById('cariPanel').style.display = 'block';
+  }
+  
+  // Diğer panelleri gizle
+  document.getElementById('yoneticiPanel')?.style.display = 'none';
+  document.getElementById('ayarlarPanel')?.style.display = 'none';
+  
+  // Menü butonlarını gizle
+  document.getElementById('menuYonetici')?.style.display = 'none';
+  document.getElementById('menuAyarlar')?.style.display = 'none';
+  
+  // Müşteri bilgisini göster
+  if (currentUser) {
+    const titlebarUser = document.querySelector('.titlebar-user-info');
+    if (titlebarUser) {
+      titlebarUser.textContent = `👤 ${currentUser.email} (Müşteri)`;
+    }
+  }
+  
+  // Cariler listesini yükle
+  try {
+    await carileritabloyaYukle();
+    
+    // Müşterinin kendi kartını otomatik aç
+    if (currentCustomerKod) {
+      setTimeout(() => cariAc(currentCustomerKod), 500);
+    }
+  } catch (err) {
+    console.log('Cari yükleme hatası:', err);
+  }
+}
+
+// Çıkış yapıldığında sıfırla
+function logout() {
+  currentUser = null;
+  currentUserRole = null;
+  currentCustomerKod = null;
+  document.getElementById('loginOverlay').classList.remove('hidden');
+  backToChoice();
+}
+
 async function adminLogin() {
   const username = document.getElementById('adminUsername').value.trim();
   const password = document.getElementById('adminPassword').value.trim();
@@ -1834,34 +1891,63 @@ async function customerLogin() {
     return;
   }
   
-  loading(true, 'Giriş Yapılıyor...');
+  loading(true, 'Müşteri girişi yapılıyor...');
   try {
+    // Email olarak gir
+    let loginEmail = username;
+    if (!username.includes('@')) {
+      loginEmail = username + '@veresiye.local';
+    }
+    
     const response = await fetch(`${SUPA_URL}/auth/v1/token?grant_type=password`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'apikey': SUPA_KEY },
       body: JSON.stringify({
-        email: username + '@veresiye.local',
+        email: loginEmail,
         password: password
       })
     });
     
     const data = await response.json();
-    if (data.error) throw new Error(data.error_description || data.error);
     
+    if (data.error) {
+      throw new Error(data.error_description || data.error);
+    }
+    
+    // Giriş başarılı
     currentUser = data.user;
     currentUserRole = 'customer';
+    
+    // Müşteri kodunu bul
+    try {
+      const profileResponse = await fetch(`${SUPA_URL}/rest/v1/profiles?id=eq.${data.user.id}`, {
+        headers: HEADERS
+      });
+      const profiles = await profileResponse.json();
+      if (profiles && profiles.length > 0) {
+        currentCustomerKod = profiles[0].customer_kod;
+      }
+    } catch (e) {
+      console.log('Profile alınamadı:', e);
+    }
+    
+    // Giriş ekranını kapat
     document.getElementById('loginOverlay').classList.add('hidden');
+    
+    // Müşteri panelini aç
+    await showCustomerPanel();
+    
     loading(false);
     toast('✓ Müşteri girişi başarılı');
     
-    // Müşteri paneli göster
-    showCustomerPanel();
-    
   } catch (error) {
     loading(false);
-    showError('customerError', 'Giriş Hatası: ' + error.message);
+    showError('customerError', '❌ ' + error.message);
+    document.getElementById('customerPassword').value = '';
+    document.getElementById('customerPassword').focus();
   }
 }
+
 function logout() {
   if (confirm('Çıkış yapmak istediğinizden emin misiniz?')) {
     currentUser = null;
@@ -2388,15 +2474,50 @@ async function cariUnvanKeyDown(e) {
   const unvan = document.getElementById('txtCariUnvan').value.trim().toUpperCase();
   if (!unvan) return;
   const kod = parseInt(document.getElementById('txtCariKod').value);
-  loading(true,'Kaydediliyor...');
+  loading(true,'Müşteri oluşturuluyor...');
   try {
+    // Önce cariler tablosuna ekle
     const res = await sbPost('cariler',{kod, unvan, bakiye:0});
+    
+    // Supabase Auth'ta kullanıcı oluştur
+    const musteriEmail = `musteri${String(kod).padStart(3,'0')}@veresiye.local`;
+    const musteriSifre = `Musteri${String(kod).padStart(3,'0')}123!`;
+    
+    try {
+      const authResponse = await fetch(`${SUPA_URL}/auth/v1/signup`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'apikey': SUPA_KEY },
+        body: JSON.stringify({
+          email: musteriEmail,
+          password: musteriSifre
+        })
+      });
+      
+      const authData = await authResponse.json();
+      
+      if (!authData.error && authData.user && authData.user.id) {
+        // profiles tablosuna ekle
+        await sbPost('profiles', {
+          id: authData.user.id,
+          username: musteriEmail,
+          is_admin: false,
+          is_customer: true,
+          customer_kod: kod,
+          created_at: new Date().toISOString()
+        });
+      }
+    } catch (authErr) {
+      console.warn('Auth kaydı hatası (sorun değil):', authErr.message);
+    }
+    
     cariListesi.push(res[0]);
     cariListesi.sort((a,b)=>a.kod-b.kod);
     tabloYenile(); otomatikKodVer(); genelBakiyeHesapla();
     document.getElementById('txtCariUnvan').value='';
     document.getElementById('txtCariUnvan').focus();
-    toast(`✓ ${unvan} eklendi`);
+    
+    toast(`✓ ${unvan} eklendi\n📧 Email: ${musteriEmail}\n🔑 Şifre: ${musteriSifre}`);
+    
   } catch(err){ toast('Hata: '+err.message, true); }
   loading(false);
 }
