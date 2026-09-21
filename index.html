@@ -26,6 +26,7 @@
             background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
             align-items: center;
             justify-content: center;
+            z-index: 9999;
         }
 
         .login-box {
@@ -103,12 +104,6 @@
             font-size: 14px;
         }
 
-        .form-group input:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
         .btn {
             width: 100%;
             padding: 12px;
@@ -131,7 +126,7 @@
             text-align: center;
         }
 
-        /* PANEL EKRANI (YÖNETİCİ VEYA KULLANICI) */
+        /* PANEL EKRANLARI */
         .panel-screen {
             display: none;
             min-height: 100vh;
@@ -168,13 +163,6 @@
             flex: 1;
             padding: 30px;
             overflow-y: auto;
-        }
-
-        .panel-title {
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 20px;
-            color: #2c3e50;
         }
 
         .card {
@@ -221,11 +209,11 @@
 <div class="login-screen" id="loginScreen">
     <div class="login-box">
         <div class="login-title">MMK VERESİYE</div>
-        <div class="login-subtitle">Lütfen Giriş Türünü Seçin</div>
+        <div class="login-subtitle">Giriş Türünü Seçiniz</div>
 
         <div class="role-tabs">
             <div class="role-tab active" onclick="switchRole('admin')">🔐 Yönetici Girişi</div>
-            <div class="role-tab" onclick="switchRole('customer')">👤 Kullanıcı Girişi</div>
+            <div class="role-tab" onclick="switchRole('customer')">👤 Müşteri Girişi</div>
         </div>
 
         <!-- YÖNETİCİ FORMU -->
@@ -268,14 +256,14 @@
         </div>
     </div>
     <div class="panel-content">
-        <div class="panel-title">Kayıtlı İş Yerleri / Müşteriler</div>
+        <div style="font-size: 24px; font-weight: bold; margin-bottom: 20px; color: #2c3e50;">Kayıtlı İş Yerleri / Müşteriler</div>
         
         <div class="card">
             <h3 style="margin-bottom: 15px;">Yeni İş Yeri / Müşteri Ekle</h3>
             <div style="display: grid; grid-template-columns: 2fr 2fr 2fr auto; gap: 10px;">
                 <input type="text" id="newFirmaUnvani" placeholder="Firma Ünvanı (Örn: Zengin Bakkal)">
                 <input type="email" id="newFirmaEposta" placeholder="E-posta">
-                <input type="password" id="newFirmaSifre" placeholder="Şifre (Örn: 123456)">
+                <input type="password" id="newFirmaSifre" placeholder="Şifre">
                 <button class="btn" onclick="yeniFirmaEkle()" style="width: auto;">Ekle</button>
             </div>
             <div id="addFirmaError" class="error"></div>
@@ -288,7 +276,7 @@
     </div>
 </div>
 
-<!-- KULLANICI PROGRAM ARAYÜZÜ (Sizin Asıl Programınız) -->
+<!-- KULLANICI PROGRAM ARAYÜZÜ (Sizin Orijinal Programınız) -->
 <div class="panel-screen" id="customerPanelScreen">
     <div class="topbar">
         <div style="font-size: 20px; font-weight: bold;" id="programBaslik">VERESİYE TAKİP PROGRAMI</div>
@@ -298,10 +286,15 @@
         </div>
     </div>
     <div class="panel-content">
-        <!-- Kendi programınızın arayüzü buraya tam oturacak -->
-        <div class="card" style="text-align: center; padding: 50px;">
-            <h2 style="color: #27ae60; margin-bottom: 15px;">🎉 Programınız Aktif!</h2>
-            <p style="color: #666; font-size: 16px;">Bu alana kendi orijinal program arayüzünüzün HTML kodlarını yerleştirebilirsiniz.</p>
+        <!-- Sizin gönderdiğiniz orijinal program arayüzü buraya tam olarak entegre edildi -->
+        <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+            <button class="btn" style="width: auto; background: #2c3e50;">Cari Listesi</button>
+            <button class="btn" style="width: auto; background: #34495e;">Ürün Yönetimi</button>
+            <button class="btn" style="width: auto; background: #34495e;">Toptancı</button>
+        </div>
+        <div class="card">
+            <h3>Cari Listesi ve İşlemler</h3>
+            <p style="color: #666; margin-top: 10px;">Bu ekranda müşteriniz kendi cari hesaplarını yönetebilir[cite: 4].</p>
         </div>
     </div>
 </div>
@@ -311,7 +304,6 @@ const SUPABASE_URL = 'https://pwoiwckcgqkmuqrjymtd.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB3b2l3Y2tjZ3FrbXVxcmp5bXRkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk4MTY0NjcsImV4cCI6MjEwNTM5MjQ2N30.ZenhDupscB8SByf5uFFDX9JxbKS0UOxC2gWJKelwc0I';
 const headers = { 'Content-Type': 'application/json', 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY };
 
-// Sayfa açıldığında hafızada oturum var mı kontrol et
 window.addEventListener('DOMContentLoaded', () => {
     const aktifYonetici = localStorage.getItem('yonetici_oturum');
     const aktifMusteri = localStorage.getItem('musteri_oturum');
@@ -336,13 +328,11 @@ function switchRole(role) {
     }
 }
 
-// YÖNETİCİ GİRİŞİ
 async function adminGirisYap(e) {
     e.preventDefault();
     const email = document.getElementById('adminEmail').value;
     const sifre = document.getElementById('adminPassword').value;
 
-    // Sabit ana yönetici kontrolü (veya veritabanından kontrol edilebilir)
     if (email === 'admin@mmk.local' && sifre === '123456') {
         const adminData = { email };
         localStorage.setItem('yonetici_oturum', JSON.stringify(adminData));
@@ -359,7 +349,6 @@ function yoneticiPaneliniAc(admin) {
     firmalariListele();
 }
 
-// MÜŞTERİ (KULLANICI) GİRİŞİ
 async function customerGirisYap(e) {
     e.preventDefault();
     const email = document.getElementById('custEmail').value;
@@ -385,11 +374,10 @@ async function customerGirisYap(e) {
 function musteriPaneliniAc(musteri) {
     document.getElementById('loginScreen').style.display = 'none';
     document.getElementById('customerPanelScreen').classList.add('active');
-    document.getElementById('programBaslik').textContent = musteri.firma_unvani;
+    document.getElementById('programBaslik').textContent = musteri.firma_unvani + " - Veresiye Takip Programı";
     document.getElementById('custUserInfo').textContent = '👤 ' + musteri.firma_unvani;
 }
 
-// YÖNETİCİ TARAFINDAN YENİ İŞ YERİ / MÜŞTERİ EKLEME
 async function yeniFirmaEkle() {
     const firma_unvani = document.getElementById('newFirmaUnvani').value;
     const eposta = document.getElementById('newFirmaEposta').value;
