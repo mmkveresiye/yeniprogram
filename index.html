@@ -3,389 +3,293 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MMK VERESİYE</title>
+    <title>MMK VERESİYE TAKİP PROGRAMI</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            background: #1e3c72;
+            color: #fff;
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
 
-        .login-screen {
-            display: flex;
-            min-height: 100vh;
-            width: 100vw;
+        /* GİRİŞ EKRANI */
+        #loginScreen {
             position: fixed;
-            top: 0;
-            left: 0;
+            top: 0; left: 0; width: 100%; height: 100%;
             background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 9999;
+            z-index: 99999;
         }
 
-        .login-box {
-            background: white;
+        .login-card {
+            background: #ffffff;
+            color: #333;
             padding: 40px;
             border-radius: 10px;
             width: 100%;
-            max-width: 450px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        }
-
-        .login-title {
-            font-size: 28px;
-            font-weight: bold;
-            margin-bottom: 5px;
-            color: #333;
+            max-width: 400px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
             text-align: center;
         }
 
-        .login-subtitle {
-            color: #666;
-            margin-bottom: 25px;
-            font-size: 14px;
-            text-align: center;
-        }
+        .login-card h2 { margin-bottom: 20px; color: #1e3c72; }
 
-        .role-tabs {
+        .tab-menu {
             display: flex;
-            gap: 10px;
-            margin-bottom: 25px;
-        }
-
-        .role-tab {
-            flex: 1;
-            padding: 10px;
-            border: 2px solid #ddd;
-            background: #f9f9f9;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            text-align: center;
-            transition: all 0.3s;
-        }
-
-        .role-tab.active {
-            border-color: #667eea;
-            background: #667eea;
-            color: white;
-        }
-
-        .login-form {
-            display: none;
-        }
-
-        .login-form.active {
-            display: block;
-        }
-
-        .form-group {
             margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: #333;
-            font-weight: 500;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            font-size: 14px;
-        }
-
-        .btn {
-            width: 100%;
-            padding: 12px;
-            background: #667eea;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .btn:hover { background: #5568d3; }
-
-        .error {
-            color: #e74c3c;
-            font-size: 14px;
-            margin-top: 10px;
-            text-align: center;
-        }
-
-        /* PANEL EKRANLARI */
-        .panel-screen {
-            display: none;
-            min-height: 100vh;
-            width: 100vw;
-            background: #f5f5f5;
-            flex-direction: column;
-            position: fixed;
-            top: 0;
-            left: 0;
-        }
-
-        .panel-screen.active { display: flex; }
-
-        .topbar {
-            background: #2c3e50;
-            color: white;
-            padding: 15px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logout-btn {
-            background: #e74c3c;
-            color: white;
-            padding: 8px 15px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-        }
-
-        .panel-content {
-            flex: 1;
-            padding: 30px;
-            overflow-y: auto;
-        }
-
-        .card {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-        }
-
-        .table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-        }
-
-        .table th {
-            background: #f9f9f9;
-            padding: 12px;
-            text-align: left;
-            font-weight: 600;
             border-bottom: 2px solid #ddd;
         }
 
-        .table td {
-            padding: 12px;
-            border-bottom: 1px solid #eee;
+        .tab-btn {
+            flex: 1;
+            padding: 10px;
+            background: none;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            color: #666;
         }
 
-        .btn-small {
-            padding: 6px 12px;
-            font-size: 12px;
-            background: #e74c3c;
+        .tab-btn.active {
+            color: #1e3c72;
+            border-bottom: 2px solid #1e3c72;
+        }
+
+        .form-group { margin-bottom: 15px; text-align: left; }
+        .form-group label { display: block; margin-bottom: 5px; font-size: 14px; font-weight: 600; }
+        .form-group input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; }
+
+        .btn-giris {
+            width: 100%;
+            padding: 12px;
+            background: #1e3c72;
             color: white;
             border: none;
-            border-radius: 4px;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
             cursor: pointer;
         }
+        .btn-giris:hover { background: #2a5298; }
+
+        .error-msg { color: #e74c3c; font-size: 13px; margin-top: 10px; }
+
+        /* YÖNETİCİ PANELİ (Sadece müşteri ekleme listeleme) */
+        #adminPanel {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #f4f6f9;
+            color: #333;
+            padding: 30px;
+            display: none;
+            overflow-y: auto;
+            z-index: 88888;
+        }
+
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #2c3e50;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .admin-box {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .admin-box input { padding: 10px; margin-right: 10px; border: 1px solid #ccc; border-radius: 4px; }
+        .admin-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        .admin-table th, .admin-table td { padding: 12px; border-bottom: 1px solid #ddd; text-align: left; }
+        .admin-table th { background: #f8f9fa; }
+
+        /* ORİJİNAL PROGRAM ARAYÜZÜ (Kullanıcı girişince açılacak alan) */
+        #mainApp { display: none; }
     </style>
 </head>
 <body>
 
-<!-- GİRİŞ EKRANI -->
-<div class="login-screen" id="loginScreen">
-    <div class="login-box">
-        <div class="login-title">MMK VERESİYE</div>
-        <div class="login-subtitle">Giriş Türünü Seçiniz</div>
-
-        <div class="role-tabs">
-            <div class="role-tab active" onclick="switchRole('admin')">🔐 Yönetici Girişi</div>
-            <div class="role-tab" onclick="switchRole('customer')">👤 Müşteri Girişi</div>
-        </div>
-
-        <!-- YÖNETİCİ FORMU -->
-        <form class="login-form active" id="adminLoginForm" onsubmit="adminGirisYap(event)">
-            <div class="form-group">
-                <label>Yönetici E-posta</label>
-                <input type="email" id="adminEmail" placeholder="admin@mmk.local" required>
+    <!-- 1. GİRİŞ EKRANI (Yönetici veya Müşteri Seçimi) -->
+    <div id="loginScreen">
+        <div class="login-card">
+            <h2>MMK VERESİYE</h2>
+            
+            <div class="tab-menu">
+                <button class="tab-btn active" onclick="tabDegis('yonetici')">Yönetici Girişi</button>
+                <button class="tab-btn" onclick="tabDegis('musteri')">Müşteri Girişi</button>
             </div>
-            <div class="form-group">
-                <label>Şifre</label>
-                <input type="password" id="adminPassword" placeholder="••••••••" required>
-            </div>
-            <button type="submit" class="btn">Yönetici Girişi Yap</button>
-            <div class="error" id="adminLoginError"></div>
-        </form>
 
-        <!-- KULLANICI FORMU -->
-        <form class="login-form" id="customerLoginForm" onsubmit="customerGirisYap(event)">
-            <div class="form-group">
-                <label>Firma E-posta</label>
-                <input type="email" id="custEmail" placeholder="ornek@bakkal.com" required>
+            <!-- Yönetici Formu -->
+            <div id="formYonetici">
+                <div class="form-group">
+                    <label>Yönetici E-posta</label>
+                    <input type="email" id="admEmail" placeholder="admin@mmk.local">
+                </div>
+                <div class="form-group">
+                    <label>Şifre</label>
+                    <input type="password" id="admSifre" placeholder="123456">
+                </div>
+                <button class="btn-giris" onclick="yoneticiGirisYap()">Yönetici Giriş</button>
+                <div id="admHata" class="error-msg"></div>
             </div>
-            <div class="form-group">
-                <label>Şifre</label>
-                <input type="password" id="custPassword" placeholder="••••••••" required>
-            </div>
-            <button type="submit" class="btn" style="background: #27ae60;">Programı Aç</button>
-            <div class="error" id="custLoginError"></div>
-        </form>
-    </div>
-</div>
 
-<!-- YÖNETİCİ PANELİ -->
-<div class="panel-screen" id="adminPanelScreen">
-    <div class="topbar">
-        <div style="font-size: 18px; font-weight: bold;">🛠️ MMK YÖNETİCİ PANELİ</div>
-        <div>
-            <span id="adminInfo" style="margin-right: 15px; font-size: 14px;"></span>
-            <button class="logout-btn" onclick="logout()">Çıkış Yap</button>
+            <!-- Müşteri Formu -->
+            <div id="formMusteri" style="display: none;">
+                <div class="form-group">
+                    <label>Firma E-posta</label>
+                    <input type="email" id="musEmail" placeholder="ornek@bakkal.com">
+                </div>
+                <div class="form-group">
+                    <label>Şifre</label>
+                    <input type="password" id="musSifre" placeholder="Şifreniz">
+                </div>
+                <button class="btn-giris" onclick="musteriGirisYap()" style="background: #27ae60;">Programı Aç</button>
+                <div id="musHata" class="error-msg"></div>
+            </div>
         </div>
     </div>
-    <div class="panel-content">
-        <div style="font-size: 24px; font-weight: bold; margin-bottom: 20px; color: #2c3e50;">Kayıtlı İş Yerleri / Müşteriler</div>
-        
-        <div class="card">
-            <h3 style="margin-bottom: 15px;">Yeni İş Yeri / Müşteri Ekle</h3>
-            <div style="display: grid; grid-template-columns: 2fr 2fr 2fr auto; gap: 10px;">
-                <input type="text" id="newFirmaUnvani" placeholder="Firma Ünvanı (Örn: Zengin Bakkal)">
-                <input type="email" id="newFirmaEposta" placeholder="E-posta">
-                <input type="password" id="newFirmaSifre" placeholder="Şifre">
-                <button class="btn" onclick="yeniFirmaEkle()" style="width: auto;">Ekle</button>
+
+    <!-- 2. YÖNETİCİ PANELİ (Sadece Müşteri Oluşturma/Silme) -->
+    <div id="adminPanel">
+        <div class="admin-header">
+            <h3>🛠️ MMK Yönetici Paneli</h3>
+            <button onclick="cikisYap()" style="background: #e74c3c; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer;">Çıkış Yap</button>
+        </div>
+
+        <div class="admin-box">
+            <h3>Yeni İş Yeri / Müşteri Ekle</h3>
+            <div style="margin-top: 15px; display: flex; gap: 10px;">
+                <input type="text" id="yeniFirmaAdi" placeholder="Firma Ünvanı (Örn: Zengin Bakkal)" style="flex: 2;">
+                <input type="email" id="yeniEmail" placeholder="E-posta" style="flex: 2;">
+                <input type="password" id="yeniSifre" placeholder="Şifre" style="flex: 1;">
+                <button onclick="firmaEkle()" style="background: #27ae60; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: bold;">Müşteri Ekle</button>
             </div>
-            <div id="addFirmaError" class="error"></div>
+            <div id="ekleHata" class="error-msg"></div>
         </div>
 
-        <div class="card">
-            <h3 style="margin-bottom: 15px;">Müşteri Listesi</h3>
-            <div id="firmaListesi" style="color: #666;">Yükleniyor...</div>
+        <div class="admin-box">
+            <h3>Kayıtlı Müşteri Listesi</h3>
+            <div id="musteriListesiDiv">Yükleniyor...</div>
         </div>
     </div>
-</div>
 
-<!-- KULLANICI PROGRAM ARAYÜZÜ (Sizin Orijinal Programınız) -->
-<div class="panel-screen" id="customerPanelScreen">
-    <div class="topbar">
-        <div style="font-size: 20px; font-weight: bold;" id="programBaslik">VERESİYE TAKİP PROGRAMI</div>
-        <div>
-            <span id="custUserInfo" style="margin-right: 15px; font-size: 14px;"></span>
-            <button class="logout-btn" onclick="logout()">Çıkış Yap</button>
+    <!-- 3. ORİJİNAL PROGRAM ARAYÜZÜ (Kullanıcı Giriş Yapınca Görünecek) -->
+    <div id="mainApp">
+        <div style="background: #112240; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #2a5298;">
+            <div>
+                <h2 id="programBaslik" style="font-size: 22px; color: #fff;">GÖLBAŞI MARKET</h2>
+                <span style="font-size: 12px; color: #a0aec0;">Veresiye Takip Programı</span>
+            </div>
+            <div>
+                <span id="girisYapanFirmaText" style="margin-right: 15px; font-weight: bold;">ZENGİN BAKKAL</span>
+                <button onclick="cikisYap()" style="background: #e74c3c; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer;">Çıkış</button>
+            </div>
+        </div>
+
+        <!-- Sizin orijinal programınızın ana arayüz tasarımı buradadır -->
+        <div style="padding: 30px;">
+            <div style="display: flex; gap: 15px; margin-bottom: 20px;">
+                <button style="background: #2b6cb0; color: white; border: none; padding: 10px 20px; border-radius: 5px; font-weight: bold; cursor: pointer;">📋 CARİ LİSTESİ</button>
+                <button style="background: #2d3748; color: white; border: none; padding: 10px 20px; border-radius: 5px; font-weight: bold; cursor: pointer;">📦 ÜRÜN YÖNETİMİ</button>
+                <button style="background: #2d3748; color: white; border: none; padding: 10px 20px; border-radius: 5px; font-weight: bold; cursor: pointer;">🛒 TOPTANCI</button>
+            </div>
+
+            <div style="background: #16223a; padding: 25px; border-radius: 8px; border: 1px solid #2a5298;">
+                <h3 style="margin-bottom: 10px;">Program Alanı Aktif</h3>
+                <p style="color: #cbd5e0;">Bu ekranda müşteriniz kendi verilerini görecek ve yönetecektir.</p>
+            </div>
         </div>
     </div>
-    <div class="panel-content">
-        <!-- Sizin gönderdiğiniz orijinal program arayüzü buraya tam olarak entegre edildi -->
-        <div style="display: flex; gap: 10px; margin-bottom: 20px;">
-            <button class="btn" style="width: auto; background: #2c3e50;">Cari Listesi</button>
-            <button class="btn" style="width: auto; background: #34495e;">Ürün Yönetimi</button>
-            <button class="btn" style="width: auto; background: #34495e;">Toptancı</button>
-        </div>
-        <div class="card">
-            <h3>Cari Listesi ve İşlemler</h3>
-            <p style="color: #666; margin-top: 10px;">Bu ekranda müşteriniz kendi cari hesaplarını yönetebilir[cite: 4].</p>
-        </div>
-    </div>
-</div>
 
 <script>
 const SUPABASE_URL = 'https://pwoiwckcgqkmuqrjymtd.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB3b2l3Y2tjZ3FrbXVxcmp5bXRkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk4MTY0NjcsImV4cCI6MjEwNTM5MjQ2N30.ZenhDupscB8SByf5uFFDX9JxbKS0UOxC2gWJKelwc0I';
 const headers = { 'Content-Type': 'application/json', 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY };
 
+// Sayfa açıldığında hafızada açık oturum var mı bak
 window.addEventListener('DOMContentLoaded', () => {
-    const aktifYonetici = localStorage.getItem('yonetici_oturum');
-    const aktifMusteri = localStorage.getItem('musteri_oturum');
+    const admOturum = localStorage.getItem('adm_oturum');
+    const musOturum = localStorage.getItem('mus_oturum');
 
-    if (aktifYonetici) {
-        yoneticiPaneliniAc(JSON.parse(aktifYonetici));
-    } else if (aktifMusteri) {
-        musteriPaneliniAc(JSON.parse(aktifMusteri));
+    if (admOturum) {
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('adminPanel').style.display = 'block';
+        firmalariGetir();
+    } else if (musOturum) {
+        const firma = JSON.parse(musOturum);
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('mainApp').style.display = 'block';
+        document.getElementById('programBaslik').textContent = firma.firma_unvani;
+        document.getElementById('girisYapanFirmaText').textContent = firma.firma_unvani;
     }
 });
 
-function switchRole(role) {
-    document.querySelectorAll('.role-tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.login-form').forEach(f => f.classList.remove('active'));
-
-    if (role === 'admin') {
-        event.target.classList.add('active');
-        document.getElementById('adminLoginForm').classList.add('active');
+function tabDegis(tur) {
+    if (tur === 'yonetici') {
+        document.querySelectorAll('.tab-btn')[0].classList.add('active');
+        document.querySelectorAll('.tab-btn')[1].classList.remove('active');
+        document.getElementById('formYonetici').style.display = 'block';
+        document.getElementById('formMusteri').style.display = 'none';
     } else {
-        event.target.classList.add('active');
-        document.getElementById('customerLoginForm').classList.add('active');
+        document.querySelectorAll('.tab-btn')[1].classList.add('active');
+        document.querySelectorAll('.tab-btn')[0].classList.remove('active');
+        document.getElementById('formMusteri').style.display = 'block';
+        document.getElementById('formYonetici').style.display = 'none';
     }
 }
 
-async function adminGirisYap(e) {
-    e.preventDefault();
-    const email = document.getElementById('adminEmail').value;
-    const sifre = document.getElementById('adminPassword').value;
+// 1. Yönetici Giriş İşlemi
+function yoneticiGirisYap() {
+    const eposta = document.getElementById('admEmail').value;
+    const sifre = document.getElementById('admSifre').value;
 
-    if (email === 'admin@mmk.local' && sifre === '123456') {
-        const adminData = { email };
-        localStorage.setItem('yonetici_oturum', JSON.stringify(adminData));
-        yoneticiPaneliniAc(adminData);
+    if (eposta === 'admin@mmk.local' && sifre === '123456') {
+        localStorage.setItem('adm_oturum', 'true');
+        location.reload();
     } else {
-        document.getElementById('adminLoginError').textContent = '❌ Hatalı yönetici bilgileri!';
+        document.getElementById('admHata').textContent = 'Hatalı yönetici bilgileri!';
     }
 }
 
-function yoneticiPaneliniAc(admin) {
-    document.getElementById('loginScreen').style.display = 'none';
-    document.getElementById('adminPanelScreen').classList.add('active');
-    document.getElementById('adminInfo').textContent = '👨‍💼 ' + admin.email;
-    firmalariListele();
-}
-
-async function customerGirisYap(e) {
-    e.preventDefault();
-    const email = document.getElementById('custEmail').value;
-    const sifre = document.getElementById('custPassword').value;
+// 2. Müşteri Giriş İşlemi
+async function musteriGirisYap() {
+    const eposta = document.getElementById('musEmail').value;
+    const sifre = document.getElementById('musSifre').value;
 
     try {
-        const res = await fetch(`${SUPABASE_URL}/rest/v1/isyerleri?eposta=eq.${email}&sifre=eq.${sifre}`, { headers });
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/isyerleri?eposta=eq.${eposta}&sifre=eq.${sifre}`, { headers });
         const data = await res.json();
 
         if (data.length === 0) {
             throw new Error('E-posta veya şifre hatalı!');
         }
 
-        const musteri = data[0];
-        localStorage.setItem('musteri_oturum', JSON.stringify(musteri));
-        musteriPaneliniAc(musteri);
-
+        localStorage.setItem('mus_oturum', JSON.stringify(data[0]));
+        location.reload();
     } catch (err) {
-        document.getElementById('custLoginError').textContent = '❌ ' + err.message;
+        document.getElementById('musHata').textContent = err.message;
     }
 }
 
-function musteriPaneliniAc(musteri) {
-    document.getElementById('loginScreen').style.display = 'none';
-    document.getElementById('customerPanelScreen').classList.add('active');
-    document.getElementById('programBaslik').textContent = musteri.firma_unvani + " - Veresiye Takip Programı";
-    document.getElementById('custUserInfo').textContent = '👤 ' + musteri.firma_unvani;
-}
-
-async function yeniFirmaEkle() {
-    const firma_unvani = document.getElementById('newFirmaUnvani').value;
-    const eposta = document.getElementById('newFirmaEposta').value;
-    const sifre = document.getElementById('newFirmaSifre').value;
-    const errDiv = document.getElementById('addFirmaError');
+// 3. Yönetici Tarafından Müşteri Ekleme
+async function firmaEkle() {
+    const firma_unvani = document.getElementById('yeniFirmaAdi').value;
+    const eposta = document.getElementById('yeniEmail').value;
+    const sifre = document.getElementById('yeniSifre').value;
 
     if (!firma_unvani || !eposta || !sifre) {
-        errDiv.textContent = 'Tüm alanları doldurunuz!';
+        document.getElementById('ekleHata').textContent = 'Tüm alanları doldurun!';
         return;
     }
 
@@ -396,55 +300,53 @@ async function yeniFirmaEkle() {
             body: JSON.stringify({ firma_unvani, eposta, sifre })
         });
 
-        if (!res.ok) throw new Error('Kayıt eklenemedi (Bu e-posta kullanımda olabilir).');
+        if (!res.ok) throw new Error('Kayıt başarısız (Bu e-posta kayıtlı olabilir).');
 
-        document.getElementById('newFirmaUnvani').value = '';
-        document.getElementById('newFirmaEposta').value = '';
-        document.getElementById('newFirmaSifre').value = '';
-        errDiv.textContent = '';
-
-        firmalariListele();
+        document.getElementById('yeniFirmaAdi').value = '';
+        document.getElementById('yeniEmail').value = '';
+        document.getElementById('yeniSifre').value = '';
+        document.getElementById('ekleHata').textContent = '';
+        firmalariGetir();
     } catch (err) {
-        errDiv.textContent = '❌ ' + err.message;
+        document.getElementById('ekleHata').textContent = err.message;
     }
 }
 
-async function firmalariListele() {
+// 4. Müşterileri Listeleme
+async function firmalariGetir() {
     try {
         const res = await fetch(`${SUPABASE_URL}/rest/v1/isyerleri`, { headers });
-        const list = await res.json();
+        const data = await res.json();
 
-        let html = '<table class="table"><thead><tr><th>Firma Ünvanı</th><th>E-posta</th><th>Şifre</th><th>İşlem</th></tr></thead><tbody>';
-        list.forEach(f => {
+        let html = '<table class="admin-table"><thead><tr><th>Firma Ünvanı</th><th>E-posta</th><th>Şifre</th><th>İşlem</th></tr></thead><tbody>';
+        data.forEach(f => {
             html += `<tr>
-                <td><strong>${f.firma_unvani}</strong></td>
+                <td><b>${f.firma_unvani}</b></td>
                 <td>${f.eposta}</td>
                 <td>${f.sifre}</td>
-                <td><button class="btn-small" onclick="firmaSil('${f.id}')">Sil</button></td>
+                <td><button onclick="firmaSil('${f.id}')" style="background:#e74c3c; color:white; border:none; padding:5px 10px; border-radius:3px; cursor:pointer;">Sil</button></td>
             </tr>`;
         });
         html += '</tbody></table>';
-        if (list.length === 0) html = '<p>Henüz kayıtlı müşteri yok.</p>';
+        if (data.length === 0) html = '<p>Henüz kayıtlı müşteri yok.</p>';
 
-        document.getElementById('firmaListesi').innerHTML = html;
+        document.getElementById('musteriListesiDiv').innerHTML = html;
     } catch (err) {
         console.error(err);
     }
 }
 
+// 5. Müşteri Silme
 async function firmaSil(id) {
-    if (!confirm('Bu firmayı silmek istediğinize emin misiniz?')) return;
-    try {
-        await fetch(`${SUPABASE_URL}/rest/v1/isyerleri?id=eq.${id}`, { method: 'DELETE', headers });
-        firmalariListele();
-    } catch (err) {
-        alert('Hata: ' + err.message);
-    }
+    if (!confirm('Silmek istediğinize emin misiniz?')) return;
+    await fetch(`${SUPABASE_URL}/rest/v1/isyerleri?id=eq.${id}`, { method: 'DELETE', headers });
+    firmalariGetir();
 }
 
-function logout() {
-    localStorage.removeItem('yonetici_oturum');
-    localStorage.removeItem('musteri_oturum');
+// Çıkış Yap
+function cikisYap() {
+    localStorage.removeItem('adm_oturum');
+    localStorage.removeItem('mus_oturum');
     location.reload();
 }
 </script>
