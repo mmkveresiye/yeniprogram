@@ -16,16 +16,6 @@
             justify-content: center;
         }
 
-        .container {
-            width: 100%;
-            max-width: 1200px;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-            overflow: hidden;
-        }
-
-        /* GİRİŞ EKRANI */
         .login-screen {
             display: flex;
             min-height: 100vh;
@@ -50,16 +40,48 @@
         .login-title {
             font-size: 28px;
             font-weight: bold;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
             color: #333;
             text-align: center;
         }
 
         .login-subtitle {
             color: #666;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
             font-size: 14px;
             text-align: center;
+        }
+
+        .role-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .role-tab {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #ddd;
+            background: #f9f9f9;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .role-tab.active {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+        }
+
+        .login-form {
+            display: none;
+        }
+
+        .login-form.active {
+            display: block;
         }
 
         .form-group {
@@ -100,9 +122,7 @@
             transition: all 0.3s;
         }
 
-        .btn:hover {
-            background: #5568d3;
-        }
+        .btn:hover { background: #5568d3; }
 
         .error {
             color: #e74c3c;
@@ -111,7 +131,7 @@
             text-align: center;
         }
 
-        /* PANEL EKRANI */
+        /* PANEL EKRANI (YÖNETİCİ VEYA KULLANICI) */
         .panel-screen {
             display: none;
             min-height: 100vh;
@@ -123,9 +143,7 @@
             left: 0;
         }
 
-        .panel-screen.active {
-            display: flex;
-        }
+        .panel-screen.active { display: flex; }
 
         .topbar {
             background: #2c3e50;
@@ -134,11 +152,6 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-        }
-
-        .topbar-user {
-            font-size: 14px;
-            margin-right: 15px;
         }
 
         .logout-btn {
@@ -151,10 +164,6 @@
             font-size: 14px;
         }
 
-        .logout-btn:hover {
-            background: #c0392b;
-        }
-
         .panel-content {
             flex: 1;
             padding: 30px;
@@ -164,40 +173,8 @@
         .panel-title {
             font-size: 24px;
             font-weight: bold;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             color: #2c3e50;
-        }
-
-        .tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 30px;
-            border-bottom: 2px solid #ddd;
-        }
-
-        .tab-btn {
-            padding: 12px 20px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: 600;
-            color: #666;
-            border-bottom: 3px solid transparent;
-            transition: all 0.3s;
-        }
-
-        .tab-btn.active {
-            color: #667eea;
-            border-bottom-color: #667eea;
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
         }
 
         .card {
@@ -211,7 +188,7 @@
         .table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
+            margin-top: 15px;
         }
 
         .table th {
@@ -227,86 +204,15 @@
             border-bottom: 1px solid #eee;
         }
 
-        .table tr:hover {
-            background: #f5f5f5;
-        }
-
         .btn-small {
-            padding: 8px 12px;
+            padding: 6px 12px;
             font-size: 12px;
-            background: #3498db;
+            background: #e74c3c;
             color: white;
             border: none;
             border-radius: 4px;
             cursor: pointer;
-            margin-right: 5px;
         }
-
-        .btn-small:hover {
-            background: #2980b9;
-        }
-
-        .btn-delete {
-            background: #e74c3c;
-        }
-
-        .btn-delete:hover {
-            background: #c0392b;
-        }
-
-        .loading {
-            text-align: center;
-            padding: 20px;
-            color: #667eea;
-            font-weight: 600;
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.5);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            width: 90%;
-            max-width: 500px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-        }
-
-        .modal-title {
-            font-size: 20px;
-            font-weight: bold;
-            margin-bottom: 20px;
-            color: #2c3e50;
-        }
-
-        .balance {
-            font-size: 18px;
-            font-weight: bold;
-            color: #2c3e50;
-            padding: 15px;
-            background: #f0f0f0;
-            border-radius: 6px;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .balance.positive { color: #27ae60; background: #e8f8f5; }
-        .balance.negative { color: #e74c3c; background: #fadbd8; }
     </style>
 </head>
 <body>
@@ -315,126 +221,151 @@
 <div class="login-screen" id="loginScreen">
     <div class="login-box">
         <div class="login-title">MMK VERESİYE</div>
-        <div class="login-subtitle">İş Yeri Giriş Paneli</div>
+        <div class="login-subtitle">Lütfen Giriş Türünü Seçin</div>
 
-        <form id="loginForm" onsubmit="isyeriGirisYap(event)">
+        <div class="role-tabs">
+            <div class="role-tab active" onclick="switchRole('admin')">🔐 Yönetici Girişi</div>
+            <div class="role-tab" onclick="switchRole('customer')">👤 Kullanıcı Girişi</div>
+        </div>
+
+        <!-- YÖNETİCİ FORMU -->
+        <form class="login-form active" id="adminLoginForm" onsubmit="adminGirisYap(event)">
             <div class="form-group">
-                <label>İş Yeri E-posta</label>
-                <input type="email" id="loginEmail" placeholder="isyeri@mmk.local" required>
+                <label>Yönetici E-posta</label>
+                <input type="email" id="adminEmail" placeholder="admin@mmk.local" required>
             </div>
             <div class="form-group">
                 <label>Şifre</label>
-                <input type="password" id="loginPassword" placeholder="••••••••" required>
+                <input type="password" id="adminPassword" placeholder="••••••••" required>
             </div>
-            <button type="submit" class="btn">Giriş Yap</button>
-            <div class="error" id="loginError"></div>
+            <button type="submit" class="btn">Yönetici Girişi Yap</button>
+            <div class="error" id="adminLoginError"></div>
+        </form>
+
+        <!-- KULLANICI FORMU -->
+        <form class="login-form" id="customerLoginForm" onsubmit="customerGirisYap(event)">
+            <div class="form-group">
+                <label>Firma E-posta</label>
+                <input type="email" id="custEmail" placeholder="ornek@bakkal.com" required>
+            </div>
+            <div class="form-group">
+                <label>Şifre</label>
+                <input type="password" id="custPassword" placeholder="••••••••" required>
+            </div>
+            <button type="submit" class="btn" style="background: #27ae60;">Programı Aç</button>
+            <div class="error" id="custLoginError"></div>
         </form>
     </div>
 </div>
 
-<!-- PANEL EKRANI -->
-<div class="panel-screen" id="panelScreen">
+<!-- YÖNETİCİ PANELİ -->
+<div class="panel-screen" id="adminPanelScreen">
     <div class="topbar">
-        <div style="font-size: 20px; font-weight: bold;">📊 MMK VERESİYE TAKİP</div>
+        <div style="font-size: 18px; font-weight: bold;">🛠️ MMK YÖNETİCİ PANELİ</div>
         <div>
-            <span class="topbar-user" id="userInfo"></span>
-            <button class="logout-btn" onclick="logout()">Çıkış</button>
+            <span id="adminInfo" style="margin-right: 15px; font-size: 14px;"></span>
+            <button class="logout-btn" onclick="logout()">Çıkış Yap</button>
         </div>
     </div>
-
     <div class="panel-content">
-        <div id="adminPanel">
-            <div class="panel-title" id="firmaBaslik">Yönetici Paneli</div>
-
-            <div class="tabs">
-                <button class="tab-btn active" onclick="switchTab('customers-tab', this)">👥 Müşteriler</button>
-                <button class="tab-btn" onclick="switchTab('stats-tab', this)">📈 İstatistikler</button>
+        <div class="panel-title">Kayıtlı İş Yerleri / Müşteriler</div>
+        
+        <div class="card">
+            <h3 style="margin-bottom: 15px;">Yeni İş Yeri / Müşteri Ekle</h3>
+            <div style="display: grid; grid-template-columns: 2fr 2fr 2fr auto; gap: 10px;">
+                <input type="text" id="newFirmaUnvani" placeholder="Firma Ünvanı (Örn: Zengin Bakkal)">
+                <input type="email" id="newFirmaEposta" placeholder="E-posta">
+                <input type="password" id="newFirmaSifre" placeholder="Şifre (Örn: 123456)">
+                <button class="btn" onclick="yeniFirmaEkle()" style="width: auto;">Ekle</button>
             </div>
+            <div id="addFirmaError" class="error"></div>
+        </div>
 
-            <!-- MÜŞTERILER SEKMESI -->
-            <div id="customers-tab" class="tab-content active">
-                <div class="card">
-                    <h3 style="margin-bottom: 15px;">Yeni Müşteri Ekle</h3>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 10px;">
-                        <input type="number" id="newCustCode" placeholder="Kod" min="1">
-                        <input type="text" id="newCustName" placeholder="Müşteri Adı">
-                        <input type="text" id="newCustTelefon" placeholder="Telefon">
-                        <button class="btn" onclick="addCustomer()" style="width: auto;">Ekle</button>
-                    </div>
-                    <div id="addCustError" class="error"></div>
-                </div>
-
-                <div class="card">
-                    <h3 style="margin-bottom: 15px;">Müşteri Listesi</h3>
-                    <div id="customersList" class="loading">Yükleniyor...</div>
-                </div>
-            </div>
-
-            <!-- İSTATİSTİKLER SEKMESI -->
-            <div id="stats-tab" class="tab-content">
-                <div class="card">
-                    <h3>Genel İstatistikler</h3>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-top: 20px;">
-                        <div style="text-align: center; padding: 20px; background: #f0f0f0; border-radius: 8px;">
-                            <div style="font-size: 32px; font-weight: bold; color: #667eea;" id="totalCustomers">-</div>
-                            <div style="color: #666; margin-top: 10px;">Toplam Müşteri</div>
-                        </div>
-                        <div style="text-align: center; padding: 20px; background: #f0f0f0; border-radius: 8px;">
-                            <div style="font-size: 32px; font-weight: bold; color: #27ae60;" id="totalBalance">-</div>
-                            <div style="color: #666; margin-top: 10px;">Toplam Bakiye</div>
-                        </div>
-                        <div style="text-align: center; padding: 20px; background: #f0f0f0; border-radius: 8px;">
-                            <div style="font-size: 32px; font-weight: bold; color: #e74c3c;" id="totalDebt">-</div>
-                            <div style="color: #666; margin-top: 10px;">Toplam Borç</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="card">
+            <h3 style="margin-bottom: 15px;">Müşteri Listesi</h3>
+            <div id="firmaListesi" style="color: #666;">Yükleniyor...</div>
         </div>
     </div>
 </div>
 
-<!-- MODAL (Müşteri Detay / İşlem Ekleme) -->
-<div class="modal" id="modal">
-    <div class="modal-content">
-        <div class="modal-title" id="modalTitle">Müşteri Detayı</div>
-        <div id="modalBody"></div>
-        <button class="btn" onclick="closeModal()" style="margin-top: 20px; background: #95a5a6;">Kapat</button>
+<!-- KULLANICI PROGRAM ARAYÜZÜ (Sizin Asıl Programınız) -->
+<div class="panel-screen" id="customerPanelScreen">
+    <div class="topbar">
+        <div style="font-size: 20px; font-weight: bold;" id="programBaslik">VERESİYE TAKİP PROGRAMI</div>
+        <div>
+            <span id="custUserInfo" style="margin-right: 15px; font-size: 14px;"></span>
+            <button class="logout-btn" onclick="logout()">Çıkış Yap</button>
+        </div>
+    </div>
+    <div class="panel-content">
+        <!-- Kendi programınızın arayüzü buraya tam oturacak -->
+        <div class="card" style="text-align: center; padding: 50px;">
+            <h2 style="color: #27ae60; margin-bottom: 15px;">🎉 Programınız Aktif!</h2>
+            <p style="color: #666; font-size: 16px;">Bu alana kendi orijinal program arayüzünüzün HTML kodlarını yerleştirebilirsiniz.</p>
+        </div>
     </div>
 </div>
 
 <script>
-// ===== SUPABASE KONFİGÜRASYON =====
 const SUPABASE_URL = 'https://pwoiwckcgqkmuqrjymtd.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB3b2l3Y2tjZ3FrbXVxcmp5bXRkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk4MTY0NjcsImV4cCI6MjEwNTM5MjQ2N30.ZenhDupscB8SByf5uFFDX9JxbKS0UOxC2gWJKelwc0I';
-
-const headers = {
-    'Content-Type': 'application/json',
-    'apikey': SUPABASE_KEY,
-    'Authorization': 'Bearer ' + SUPABASE_KEY
-};
-
-// ===== GLOBAL DEĞİŞKENLER =====
-let aktifIsyeri = null;
+const headers = { 'Content-Type': 'application/json', 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY };
 
 // Sayfa açıldığında hafızada oturum var mı kontrol et
 window.addEventListener('DOMContentLoaded', () => {
-    const kaydedilenFirma = localStorage.getItem('aktif_isyeri');
-    if (kaydedilenFirma) {
-        aktifIsyeri = JSON.parse(kaydedilenFirma);
-        panelGoster();
+    const aktifYonetici = localStorage.getItem('yonetici_oturum');
+    const aktifMusteri = localStorage.getItem('musteri_oturum');
+
+    if (aktifYonetici) {
+        yoneticiPaneliniAc(JSON.parse(aktifYonetici));
+    } else if (aktifMusteri) {
+        musteriPaneliniAc(JSON.parse(aktifMusteri));
     }
 });
 
-// ===== GİRİŞ İŞLEMLERİ =====
-async function isyeriGirisYap(e) {
+function switchRole(role) {
+    document.querySelectorAll('.role-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.login-form').forEach(f => f.classList.remove('active'));
+
+    if (role === 'admin') {
+        event.target.classList.add('active');
+        document.getElementById('adminLoginForm').classList.add('active');
+    } else {
+        event.target.classList.add('active');
+        document.getElementById('customerLoginForm').classList.add('active');
+    }
+}
+
+// YÖNETİCİ GİRİŞİ
+async function adminGirisYap(e) {
     e.preventDefault();
-    const email = document.getElementById('loginEmail').value;
-    const sifre = document.getElementById('loginPassword').value;
-    const errorDiv = document.getElementById('loginError');
+    const email = document.getElementById('adminEmail').value;
+    const sifre = document.getElementById('adminPassword').value;
+
+    // Sabit ana yönetici kontrolü (veya veritabanından kontrol edilebilir)
+    if (email === 'admin@mmk.local' && sifre === '123456') {
+        const adminData = { email };
+        localStorage.setItem('yonetici_oturum', JSON.stringify(adminData));
+        yoneticiPaneliniAc(adminData);
+    } else {
+        document.getElementById('adminLoginError').textContent = '❌ Hatalı yönetici bilgileri!';
+    }
+}
+
+function yoneticiPaneliniAc(admin) {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('adminPanelScreen').classList.add('active');
+    document.getElementById('adminInfo').textContent = '👨‍💼 ' + admin.email;
+    firmalariListele();
+}
+
+// MÜŞTERİ (KULLANICI) GİRİŞİ
+async function customerGirisYap(e) {
+    e.preventDefault();
+    const email = document.getElementById('custEmail').value;
+    const sifre = document.getElementById('custPassword').value;
 
     try {
-        // isyerleri tablosundan firmayı sorgula
         const res = await fetch(`${SUPABASE_URL}/rest/v1/isyerleri?eposta=eq.${email}&sifre=eq.${sifre}`, { headers });
         const data = await res.json();
 
@@ -442,233 +373,91 @@ async function isyeriGirisYap(e) {
             throw new Error('E-posta veya şifre hatalı!');
         }
 
-        aktifIsyeri = data[0];
-        localStorage.setItem('aktif_isyeri', JSON.stringify(aktifIsyeri));
-        
-        panelGoster();
+        const musteri = data[0];
+        localStorage.setItem('musteri_oturum', JSON.stringify(musteri));
+        musteriPaneliniAc(musteri);
+
     } catch (err) {
-        errorDiv.textContent = '❌ ' + err.message;
+        document.getElementById('custLoginError').textContent = '❌ ' + err.message;
     }
 }
 
-function panelGoster() {
+function musteriPaneliniAc(musteri) {
     document.getElementById('loginScreen').style.display = 'none';
-    document.getElementById('panelScreen').classList.add('active');
-    document.getElementById('userInfo').textContent = `🏢 ${aktifIsyeri.firma_unvani} (${aktifIsyeri.eposta})`;
-    document.getElementById('firmaBaslik').textContent = aktifIsyeri.firma_unvani + " - Müşteri Yönetimi";
-    
-    loadCustomers();
+    document.getElementById('customerPanelScreen').classList.add('active');
+    document.getElementById('programBaslik').textContent = musteri.firma_unvani;
+    document.getElementById('custUserInfo').textContent = '👤 ' + musteri.firma_unvani;
 }
 
-function logout() {
-    localStorage.removeItem('aktif_isyeri');
-    aktifIsyeri = null;
-    document.getElementById('panelScreen').classList.remove('active');
-    document.getElementById('loginScreen').style.display = 'flex';
-    document.getElementById('loginEmail').value = '';
-    document.getElementById('loginPassword').value = '';
-    document.getElementById('loginError').textContent = '';
-}
+// YÖNETİCİ TARAFINDAN YENİ İŞ YERİ / MÜŞTERİ EKLEME
+async function yeniFirmaEkle() {
+    const firma_unvani = document.getElementById('newFirmaUnvani').value;
+    const eposta = document.getElementById('newFirmaEposta').value;
+    const sifre = document.getElementById('newFirmaSifre').value;
+    const errDiv = document.getElementById('addFirmaError');
 
-// ===== MÜŞTERİ YÖNETİMİ (isyeri_id Filtreli) =====
-async function loadCustomers() {
-    try {
-        const res = await fetch(`${SUPABASE_URL}/rest/v1/customers?isyeri_id=eq.${aktifIsyeri.id}`, { headers });
-        const customers = await res.json();
-        
-        let html = '<table class="table"><thead><tr><th>Kod</th><th>Adı</th><th>Telefon</th><th>Bakiye</th><th>İşlem</th></tr></thead><tbody>';
-        
-        customers.forEach(c => {
-            const balanceClass = c.bakiye > 0 ? 'positive' : (c.bakiye < 0 ? 'negative' : '');
-            html += `<tr>
-                <td>${c.kod}</td>
-                <td>${c.unvan}</td>
-                <td>${c.telefon || '-'}</td>
-                <td class="balance ${balanceClass}" style="padding: 5px; font-size: 14px;">${c.bakiye.toFixed(2)} TL</td>
-                <td>
-                    <button class="btn-small" onclick="viewCustomer('${c.id}')">Detay / İşlem</button>
-                    <button class="btn-small btn-delete" onclick="deleteCustomer('${c.id}')">Sil</button>
-                </td>
-            </tr>`;
-        });
-        
-        html += '</tbody></table>';
-        if (customers.length === 0) html = '<p style="text-align: center; color: #999;">Henüz kayıtlı müşteri yok.</p>';
-        
-        document.getElementById('customersList').innerHTML = html;
-        
-        // İstatistikleri Güncelle
-        document.getElementById('totalCustomers').textContent = customers.length;
-        const totalBalance = customers.reduce((sum, c) => sum + c.bakiye, 0);
-        document.getElementById('totalBalance').textContent = totalBalance.toFixed(2) + ' TL';
-        document.getElementById('totalDebt').textContent = Math.abs(Math.min(0, totalBalance)).toFixed(2) + ' TL';
-        
-    } catch (err) {
-        console.error(err);
-    }
-}
-
-async function addCustomer() {
-    const code = parseInt(document.getElementById('newCustCode').value);
-    const name = document.getElementById('newCustName').value;
-    const telefon = document.getElementById('newCustTelefon').value;
-    const errDiv = document.getElementById('addCustError');
-    
-    if (!code || !name) {
-        errDiv.textContent = 'Kod ve Müşteri Adı zorunludur!';
+    if (!firma_unvani || !eposta || !sifre) {
+        errDiv.textContent = 'Tüm alanları doldurunuz!';
         return;
     }
-    
+
     try {
-        const res = await fetch(`${SUPABASE_URL}/rest/v1/customers`, {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/isyerleri`, {
             method: 'POST',
             headers,
-            body: JSON.stringify({
-                isyeri_id: aktifIsyeri.id,
-                kod: code,
-                unvan: name,
-                telefon: telefon,
-                bakiye: 0
-            })
+            body: JSON.stringify({ firma_unvani, eposta, sifre })
         });
-        
-        if (!res.ok) throw new Error('Müşteri eklenirken hata oluştu.');
-        
-        document.getElementById('newCustCode').value = '';
-        document.getElementById('newCustName').value = '';
-        document.getElementById('newCustTelefon').value = '';
+
+        if (!res.ok) throw new Error('Kayıt eklenemedi (Bu e-posta kullanımda olabilir).');
+
+        document.getElementById('newFirmaUnvani').value = '';
+        document.getElementById('newFirmaEposta').value = '';
+        document.getElementById('newFirmaSifre').value = '';
         errDiv.textContent = '';
-        
-        loadCustomers();
+
+        firmalariListele();
     } catch (err) {
         errDiv.textContent = '❌ ' + err.message;
     }
 }
 
-async function deleteCustomer(id) {
-    if (!confirm('Müşteri ve tüm hareketleri silinecek. Emin misiniz?')) return;
-    
+async function firmalariListele() {
     try {
-        await fetch(`${SUPABASE_URL}/rest/v1/customers?id=eq.${id}`, {
-            method: 'DELETE',
-            headers
-        });
-        loadCustomers();
-    } catch (err) {
-        alert('Hata: ' + err.message);
-    }
-}
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/isyerleri`, { headers });
+        const list = await res.json();
 
-// Müşteri Detay ve İşlem Ekleme Ekranı
-async function viewCustomer(customerId) {
-    try {
-        const res = await fetch(`${SUPABASE_URL}/rest/v1/customers?id=eq.${customerId}`, { headers });
-        const [customer] = await res.json();
-        
-        const transRes = await fetch(`${SUPABASE_URL}/rest/v1/transactions?customer_id=eq.${customer.id}&order=created_at.desc`, { headers });
-        const transactions = await transRes.json();
-        
-        let html = `
-            <p><strong>Müşteri:</strong> ${customer.unvan}</p>
-            <p><strong>Kod:</strong> ${customer.kod}</p>
-            <p style="margin-bottom: 15px;"><strong>Bakiye:</strong> <span class="balance" style="font-size:14px; padding:5px;">${customer.bakiye.toFixed(2)} TL</span></p>
-            
-            <hr style="margin: 15px 0; border:0; border-top:1px solid #ddd;">
-            
-            <h4 style="margin-bottom: 10px;">İşlem Ekle (Borç / Ödeme)</h4>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px;">
-                <select id="modalTransType" style="padding:8px;">
-                    <option value="borc">Borçlandır (+)</option>
-                    <option value="odeme">Ödeme Al (-)</option>
-                </select>
-                <input type="number" id="modalTransAmount" placeholder="Tutar (TL)" step="0.01" style="padding:8px;">
-            </div>
-            <input type="text" id="modalTransDesc" placeholder="Açıklama (Opsiyonel)" style="width:100%; padding:8px; margin-bottom: 10px;">
-            <button class="btn" onclick="addTransaction('${customer.id}')" style="padding:8px;">İşlemi Kaydet</button>
-            
-            <h4 style="margin-top: 20px; margin-bottom: 10px;">İşlem Geçmişi</h4>
-            <div style="max-height: 200px; overflow-y: auto;">
-                <table class="table" style="margin-top:0;">
-                    <thead><tr><th>Tür</th><th>Tutar</th><th>Açıklama</th><th>Tarih</th></tr></thead>
-                    <tbody>`;
-        
-        transactions.forEach(t => {
+        let html = '<table class="table"><thead><tr><th>Firma Ünvanı</th><th>E-posta</th><th>Şifre</th><th>İşlem</th></tr></thead><tbody>';
+        list.forEach(f => {
             html += `<tr>
-                <td>${t.tur === 'borc' ? '📍 Borç' : '✅ Ödeme'}</td>
-                <td>${t.tutar.toFixed(2)} TL</td>
-                <td>${t.aciklama || '-'}</td>
-                <td>${new Date(t.created_at).toLocaleDateString('tr-TR')}</td>
+                <td><strong>${f.firma_unvani}</strong></td>
+                <td>${f.eposta}</td>
+                <td>${f.sifre}</td>
+                <td><button class="btn-small" onclick="firmaSil('${f.id}')">Sil</button></td>
             </tr>`;
         });
-        
-        html += `</tbody></table></div>`;
-        if (transactions.length === 0) html += '<p style="text-align: center; color: #999; margin-top:10px;">Henüz işlem yok.</p>';
-        
-        document.getElementById('modalTitle').textContent = customer.unvan;
-        document.getElementById('modalBody').innerHTML = html;
-        document.getElementById('modal').classList.add('active');
-        
+        html += '</tbody></table>';
+        if (list.length === 0) html = '<p>Henüz kayıtlı müşteri yok.</p>';
+
+        document.getElementById('firmaListesi').innerHTML = html;
     } catch (err) {
-        alert('Hata: ' + err.message);
+        console.error(err);
     }
 }
 
-async function addTransaction(customerId) {
-    const type = document.getElementById('modalTransType').value;
-    const amount = parseFloat(document.getElementById('modalTransAmount').value);
-    const desc = document.getElementById('modalTransDesc').value;
-    
-    if (!amount || amount <= 0) {
-        alert('Geçerli bir tutar girin!');
-        return;
-    }
-    
+async function firmaSil(id) {
+    if (!confirm('Bu firmayı silmek istediğinize emin misiniz?')) return;
     try {
-        const custRes = await fetch(`${SUPABASE_URL}/rest/v1/customers?id=eq.${customerId}`, { headers });
-        const [customer] = await custRes.json();
-        
-        // İşlem tablosuna ekle
-        await fetch(`${SUPABASE_URL}/rest/v1/transactions`, {
-            method: 'POST',
-            headers,
-            body: JSON.stringify({
-                customer_id: customer.id,
-                tur: type,
-                tutar: amount,
-                aciklama: desc
-            })
-        });
-        
-        // Bakiyeyi güncelle
-        const newBalance = type === 'borc' ? customer.bakiye + amount : customer.bakiye - amount;
-        
-        await fetch(`${SUPABASE_URL}/rest/v1/customers?id=eq.${customerId}`, {
-            method: 'PATCH',
-            headers,
-            body: JSON.stringify({ bakiye: newBalance })
-        });
-        
-        viewCustomer(customerId); // Modalı yenile
-        loadCustomers(); // Arka plandaki listeyi güncelle
-        
+        await fetch(`${SUPABASE_URL}/rest/v1/isyerleri?id=eq.${id}`, { method: 'DELETE', headers });
+        firmalariListele();
     } catch (err) {
         alert('Hata: ' + err.message);
     }
 }
 
-// ===== GENEL YARDIMCILAR =====
-function switchTab(tabId, btn) {
-    document.querySelectorAll('.tab-content').finally;
-    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    
-    document.getElementById(tabId).classList.add('active');
-    btn.classList.add('active');
-}
-
-function closeModal() {
-    document.getElementById('modal').classList.remove('active');
-    loadCustomers();
+function logout() {
+    localStorage.removeItem('yonetici_oturum');
+    localStorage.removeItem('musteri_oturum');
+    location.reload();
 }
 </script>
 
