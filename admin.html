@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Yönetim | Mmk Veresiye Takip Programı</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+</head>
+<body class="bg-paper text-ink min-h-screen">
+  <div id="page" class="hidden">
+
+    <header class="bg-cloth text-white">
+      <div class="mx-auto max-w-5xl px-5 py-4 flex items-center justify-between gap-4">
+        <div class="flex items-baseline gap-3">
+          <span class="font-display text-xl font-bold">Mmk</span>
+          <span class="text-white/70 text-sm">Yönetim paneli</span>
+        </div>
+        <div class="flex items-center gap-4 text-sm">
+          <span id="who" class="text-white/80"></span>
+          <button id="logoutBtn" class="rounded-md border border-white/30 px-3 py-1.5 hover:bg-white/10">Çıkış yap</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="mx-auto max-w-5xl px-5 py-8 space-y-8">
+
+      <!-- Totals -->
+      <section class="grid grid-cols-3 divide-x divide-rule rounded-md border border-rule bg-white">
+        <div class="px-5 py-4"><p class="text-sm text-ink/60">Toplam müşteri</p><p id="statTotal" class="font-display text-3xl font-bold tabular">0</p></div>
+        <div class="px-5 py-4"><p class="text-sm text-ink/60">Aktif</p><p id="statActive" class="font-display text-3xl font-bold tabular text-cloth">0</p></div>
+        <div class="px-5 py-4"><p class="text-sm text-ink/60">Onay bekleyen</p><p id="statPending" class="font-display text-3xl font-bold tabular text-brass">0</p></div>
+      </section>
+
+      <!-- Add client -->
+      <section class="rounded-md border border-rule bg-white p-5 sm:p-6">
+        <h2 class="font-display text-xl font-bold">Yeni müşteri ekle</h2>
+        <form id="addForm" class="mt-4 grid gap-4 sm:grid-cols-3" novalidate>
+          <div>
+            <label for="company" class="block text-sm font-medium">Firma adı</label>
+            <input id="company" required class="mt-1.5 w-full rounded-md border border-rule px-3 py-2 focus:border-cloth focus:outline-none focus:ring-2 focus:ring-cloth/30">
+          </div>
+          <div>
+            <label for="newUser" class="block text-sm font-medium">Kullanıcı adı</label>
+            <input id="newUser" required autocapitalize="none" autocomplete="off" class="mt-1.5 w-full rounded-md border border-rule px-3 py-2 focus:border-cloth focus:outline-none focus:ring-2 focus:ring-cloth/30">
+          </div>
+          <div>
+            <label for="newPass" class="block text-sm font-medium">Parola (en az 6 karakter)</label>
+            <input id="newPass" type="text" required autocomplete="off" class="mt-1.5 w-full rounded-md border border-rule px-3 py-2 focus:border-cloth focus:outline-none focus:ring-2 focus:ring-cloth/30">
+          </div>
+          <div class="sm:col-span-3 flex flex-wrap items-center justify-between gap-4">
+            <label class="flex items-center gap-2 text-sm">
+              <input id="approved" type="checkbox" checked class="h-4 w-4 accent-[#1F5B4A]">
+              Hemen aktif et
+            </label>
+            <button id="addBtn" type="submit" class="rounded-md bg-cloth px-5 py-2.5 font-medium text-white hover:bg-clothdk disabled:opacity-60">Müşteri ekle</button>
+          </div>
+        </form>
+      </section>
+
+      <!-- Client list -->
+      <section>
+        <div class="flex flex-wrap items-end justify-between gap-3">
+          <h2 class="font-display text-xl font-bold">Müşteriler</h2>
+          <div>
+            <label for="search" class="sr-only">Ara</label>
+            <input id="search" type="search" placeholder="Firma veya kullanıcı adı ara"
+                   class="w-64 max-w-full rounded-md border border-rule bg-white px-3 py-2 text-sm focus:border-cloth focus:outline-none focus:ring-2 focus:ring-cloth/30">
+          </div>
+        </div>
+
+        <div class="mt-3 overflow-x-auto rounded-md border border-rule bg-white">
+          <table class="w-full min-w-[640px] text-left text-sm">
+            <thead class="border-b border-rule bg-paper/60 text-ink/70">
+              <tr>
+                <th class="px-4 py-3 font-medium">Firma</th>
+                <th class="px-4 py-3 font-medium">Kullanıcı adı</th>
+                <th class="px-4 py-3 font-medium">Kayıt tarihi</th>
+                <th class="px-4 py-3 font-medium">Durum</th>
+                <th class="px-4 py-3 font-medium text-right">İşlemler</th>
+              </tr>
+            </thead>
+            <tbody id="rows" class="divide-y divide-rule"></tbody>
+          </table>
+          <p id="empty" class="hidden px-4 py-10 text-center text-ink/60">Henüz müşteri yok. Yukarıdaki formdan ilk müşteriyi ekleyin.</p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+<script>
+  const $ = id => document.getElementById(id);
+  let session = null;
+  let clients = [];
+
+  const ERR = {
+    exists: 'Bu kullanıcı adı zaten kullanılıyor.',
+    weak_password: 'Parola en az 6 karakter olmalı.',
+    invalid: 'Firma adı ve kullanıcı adı boş bırakılamaz.'
+  };
+
+  // Every admin call sends the session token; the database verifies it.
+  async function call(fn, args = {}) {
+    const { data, error } = await sb.rpc(fn, { p_token: session.token, ...args });
+    if (error) {
+      if (/unauthorized/i.test(error.message)) { clearSession(); location.replace('index.html'); }
+      throw error;
+    }
+    return data;
+  }
+
+  async function load() {
+    clients = await call('admin_list_clients');
+    render();
+  }
+
+  function render() {
+    const q = $('search').value.trim().toLowerCase();
+    const list = clients.filter(c =>
+      !q || c.company_name.toLowerCase().includes(q) || c.username.toLowerCase().includes(q));
+
+    const active = clients.filter(c => c.is_approved).length;
+    $('statTotal').textContent = clients.length;
+    $('statActive').textContent = active;
+    $('statPending').textContent = clients.length - active;
+
+    $('empty').classList.toggle('hidden', list.length > 0);
+    $('empty').textContent = clients.length
+      ? 'Aramanızla eşleşen müşteri yok.'
+      : 'Henüz müşteri yok. Yukarıdaki formdan ilk müşteriyi ekleyin.';
+
+    $('rows').innerHTML = list.map(c => `
+      <tr>
+        <td class="px-4 py-3 font-medium">${esc(c.company_name)}</td>
+        <td class="px-4 py-3 text-ink/80">${esc(c.username)}</td>
+        <td class="px-4 py-3 text-ink/70 tabular">${new Date(c.created_at).toLocaleDateString('tr-TR')}</td>
+        <td class="px-4 py-3">
+          <button data-act="toggle" data-id="${esc(c.id)}" data-next="${!c.is_approved}"
+                  title="${c.is_approved ? 'Pasif yapmak için tıklayın' : 'Aktif yapmak için tıklayın'}"
+                  class="rounded-full px-3 py-1 text-xs font-medium ${c.is_approved
+                    ? 'bg-cloth/10 text-cloth hover:bg-cloth/20'
+                    : 'bg-brass/15 text-brass hover:bg-brass/25'}">
+            ${c.is_approved ? 'Aktif' : 'Beklemede'}
+          </button>
+        </td>
+        <td class="px-4 py-3 text-right whitespace-nowrap">
+          <button data-act="reset" data-id="${esc(c.id)}" data-name="${esc(c.company_name)}" class="px-2 py-1 text-cloth hover:underline">Parolayı sıfırla</button>
+          <button data-act="delete" data-id="${esc(c.id)}" data-name="${esc(c.company_name)}" class="px-2 py-1 text-margin hover:underline">Sil</button>
+        </td>
+      </tr>`).join('');
+  }
+
+  // Row actions (event delegation)
+  $('rows').addEventListener('click', async (e) => {
+    const btn = e.target.closest('button[data-act]');
+    if (!btn) return;
+    const { act, id, name, next } = btn.dataset;
+
+    try {
+      if (act === 'toggle') {
+        await call('admin_set_approval', { p_client_id: id, p_approved: next === 'true' });
+        toast(next === 'true' ? 'Müşteri aktif edildi.' : 'Müşteri beklemeye alındı.');
+      } else if (act === 'reset') {
+        const pw = prompt(`"${name}" için yeni parola (en az 6 karakter):`);
+        if (pw === null) return;
+        const r = await call('admin_reset_password', { p_client_id: id, p_password: pw });
+        if (!r.ok) { toast(ERR[r.error] || 'İşlem başarısız.', true); return; }
+        toast('Parola güncellendi.');
+        return;
+      } else if (act === 'delete') {
+        if (!confirm(`"${name}" kalıcı olarak silinsin mi? Bu işlem geri alınamaz.`)) return;
+        await call('admin_delete_client', { p_client_id: id });
+        toast('Müşteri silindi.');
+      }
+      await load();
+    } catch (err) {
+      toast('İşlem başarısız: ' + err.message, true);
+    }
+  });
+
+  // Add client
+  $('addForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = $('addBtn');
+    btn.disabled = true;
+    try {
+      const r = await call('admin_add_client', {
+        p_username: $('newUser').value,
+        p_password: $('newPass').value,
+        p_company: $('company').value,
+        p_approved: $('approved').checked
+      });
+      if (!r.ok) { toast(ERR[r.error] || 'Müşteri eklenemedi.', true); return; }
+      $('addForm').reset();
+      $('approved').checked = true;
+      toast('Müşteri eklendi.');
+      await load();
+    } catch (err) {
+      toast('İşlem başarısız: ' + err.message, true);
+    } finally {
+      btn.disabled = false;
+    }
+  });
+
+  $('search').addEventListener('input', render);
+  $('logoutBtn').addEventListener('click', logout);
+
+  // Guard + first load
+  (async () => {
+    session = await requireRole('admin');
+    if (!session) return;
+    $('who').textContent = session.name;
+    $('page').classList.remove('hidden');
+    try { await load(); } catch (err) { toast('Liste yüklenemedi: ' + err.message, true); }
+  })();
+</script>
+</body>
+</html>
