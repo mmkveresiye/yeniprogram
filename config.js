@@ -4,8 +4,8 @@
 // =====================================================================
 
 // 1) Fill these two in: Supabase Dashboard > Project Settings > API
-const SUPABASE_URL = 'https://YOUR-PROJECT-REF.supabase.co';
-const SUPABASE_ANON_KEY = 'YOUR-ANON-PUBLIC-KEY';
+const SUPABASE_URL = 'https://pwoiwckcgqkmuqrjymtd.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB3b2l3Y2tjZ3FrbXVxcmp5bXRkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk4MTY0NjcsImV4cCI6MjEwNTM5MjQ2N30.ZenhDupscB8SByf5uFFDX9JxbKS0UOxC2gWJKelwc0I';
 
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 const SESSION_KEY = 'mmk_session';
