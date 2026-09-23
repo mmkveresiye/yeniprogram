@@ -59,6 +59,25 @@
         </form>
       </section>
 
+      <!-- Admin account settings -->
+      <section class="rounded-md border border-rule bg-white p-5 sm:p-6">
+        <h2 class="font-display text-xl font-bold">Hesap ayarları</h2>
+        <p class="mt-1 text-sm text-ink/60">Kendi yönetici kullanıcı adınızı ve/veya şifrenizi değiştirin.</p>
+        <form id="accForm" class="mt-4 grid gap-4 sm:grid-cols-3" novalidate>
+          <div>
+            <label for="accUser" class="block text-sm font-medium">Yeni kullanıcı adı</label>
+            <input id="accUser" autocapitalize="none" autocomplete="off" placeholder="Değiştirmek istemiyorsan boş bırak" class="mt-1.5 w-full rounded-md border border-rule px-3 py-2 focus:border-cloth focus:outline-none focus:ring-2 focus:ring-cloth/30">
+          </div>
+          <div>
+            <label for="accPass" class="block text-sm font-medium">Yeni parola (en az 6 karakter)</label>
+            <input id="accPass" type="text" autocomplete="off" placeholder="Değiştirmek istemiyorsan boş bırak" class="mt-1.5 w-full rounded-md border border-rule px-3 py-2 focus:border-cloth focus:outline-none focus:ring-2 focus:ring-cloth/30">
+          </div>
+          <div class="flex items-end">
+            <button id="accBtn" type="submit" class="w-full rounded-md bg-ink px-5 py-2.5 font-medium text-white hover:opacity-90 disabled:opacity-60">Kaydet</button>
+          </div>
+        </form>
+      </section>
+
       <!-- Client list -->
       <section>
         <div class="flex flex-wrap items-end justify-between gap-3">
@@ -205,6 +224,27 @@
 
   $('search').addEventListener('input', render);
   $('logoutBtn').addEventListener('click', logout);
+
+  // Account settings
+  $('accForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const newUser = $('accUser').value.trim();
+    const newPass = $('accPass').value;
+    if (!newUser && !newPass) { toast('Değiştirmek için kullanıcı adı veya parola girin.', true); return; }
+    const btn = $('accBtn');
+    btn.disabled = true;
+    try {
+      const r = await call('admin_update_account', { p_new_username: newUser || null, p_new_password: newPass || null });
+      if (!r.ok) { toast(r.error === 'exists' ? 'Bu kullanıcı adı zaten kullanılıyor.' : (ERR[r.error] || 'İşlem başarısız.'), true); return; }
+      toast('Hesap bilgileri güncellendi. Bir sonraki girişte yeni bilgileri kullanın.');
+      $('accForm').reset();
+      if (newUser) session.name = newUser;
+    } catch (err) {
+      toast('İşlem başarısız: ' + err.message, true);
+    } finally {
+      btn.disabled = false;
+    }
+  });
 
   // Guard + first load
   (async () => {
