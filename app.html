@@ -1647,11 +1647,15 @@ async function sbGet(tablo, params='') {
         method: 'POST', headers: HEADERS,
         body: JSON.stringify({ p_token: getSession()?.token, p_table: tablo, p_query: params })
       });
-      if (!r.ok) throw new Error(await r.text());
+      if (!r.ok) { const err = new Error(await r.text()); err.sunucuHatasi = true; throw err; }
       const veri = await r.json();
+      cevrimici = true; bantGoster();
       if (tablo==='cariler'||tablo==='hareketler'||tablo==='toptanciler'||tablo==='toptanci_hareketleri'||tablo==='urunler') await idbYaz(tablo, Array.isArray(veri)?veri:[veri]);
       return veri;
-    } catch(e) { cevrimici=false; bantGoster(); }
+    } catch(e) {
+      if (e.sunucuHatasi) { console.error('sbGet sunucu hatası:', e); throw e; }
+      cevrimici=false; bantGoster();
+    }
   }
   const tumVeri = await idbTumunuGetir(tablo);
   return params ? idbFiltrele(tumVeri, params) : tumVeri;
@@ -1664,11 +1668,15 @@ async function sbPost(tablo, data) {
         method: 'POST', headers: HEADERS,
         body: JSON.stringify({ p_token: getSession()?.token, p_table: tablo, p_data: data })
       });
-      if (!r.ok) throw new Error(await r.text());
+      if (!r.ok) { const err = new Error(await r.text()); err.sunucuHatasi = true; throw err; }
       const sonuc = await r.json();
+      cevrimici = true; bantGoster();
       await idbYaz(tablo, Array.isArray(sonuc)?sonuc:[sonuc]);
       return sonuc;
-    } catch(e) { cevrimici=false; bantGoster(); }
+    } catch(e) {
+      if (e.sunucuHatasi) { console.error('sbPost sunucu hatası:', e); throw e; }
+      cevrimici=false; bantGoster();
+    }
   }
   // Çevrimdışı
   const items = (Array.isArray(data)?data:[data]).map((d,i)=>({...d, id:d.id||(Date.now()+i), _gecici:true}));
@@ -1685,9 +1693,14 @@ async function sbPatch(tablo, params, data) {
         method: 'POST', headers: HEADERS,
         body: JSON.stringify({ p_token: getSession()?.token, p_table: tablo, p_query: params, p_data: data })
       });
-      if (!r.ok) throw new Error(await r.text());
-      return r.json();
-    } catch(e) { cevrimici=false; bantGoster(); }
+      if (!r.ok) { const err = new Error(await r.text()); err.sunucuHatasi = true; throw err; }
+      const sonuc = await r.json();
+      cevrimici = true; bantGoster();
+      return sonuc;
+    } catch(e) {
+      if (e.sunucuHatasi) { console.error('sbPatch sunucu hatası:', e); throw e; }
+      cevrimici=false; bantGoster();
+    }
   }
   // Çevrimdışı güncelle
   const tumVeri = await idbTumunuGetir(tablo);
@@ -1706,8 +1719,12 @@ async function sbDelete(tablo, params) {
         method: 'POST', headers: HEADERS,
         body: JSON.stringify({ p_token: getSession()?.token, p_table: tablo, p_query: params })
       });
-      if (!r.ok) throw new Error(await r.text());
-    } catch(e) { cevrimici=false; bantGoster(); }
+      if (!r.ok) { const err = new Error(await r.text()); err.sunucuHatasi = true; throw err; }
+      cevrimici = true; bantGoster();
+    } catch(e) {
+      if (e.sunucuHatasi) { console.error('sbDelete sunucu hatası:', e); throw e; }
+      cevrimici=false; bantGoster();
+    }
   }
   // Çevrimdışı sil
   const tumVeri = await idbTumunuGetir(tablo);
