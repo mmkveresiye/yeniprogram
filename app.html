@@ -3272,7 +3272,32 @@ function menuAraclar(){
   const s=prompt('Araçlar:\n1) Günlük Rapor Paneli (F3)\n2) Yedekleme & Geri Yükleme (F4)\n3) Giriş Şifresini Değiştir\nSeçin:');
   if(s==='1')gunlukRaporEkraniAc();
   else if(s==='2')yedekEkraniAc();
-  else if(s==='3'){const y=prompt('Yeni şifre:');if(y&&y.trim()){setSifre(y.trim());toast('Şifre güncellendi!');}}
+  else if(s==='3')sifreDegistir();
+}
+async function sifreDegistir(){
+  const eski=prompt('Mevcut şifreniz:');
+  if(eski===null) return;
+  const yeni=prompt('Yeni şifre (en az 6 karakter):');
+  if(yeni===null) return;
+  if(yeni.trim().length<6){toast('Yeni şifre en az 6 karakter olmalı.',true);return;}
+  const tekrar=prompt('Yeni şifreyi tekrar girin:');
+  if(tekrar===null) return;
+  if(yeni.trim()!==tekrar.trim()){toast('Şifreler eşleşmiyor.',true);return;}
+  try{
+    const r = await fetch(`${SUPA_URL}/rest/v1/rpc/client_update_password`, {
+      method:'POST', headers:HEADERS,
+      body: JSON.stringify({ p_token:getSession()?.token, p_old_password:eski, p_new_password:yeni.trim() })
+    });
+    if(!r.ok) throw new Error(await r.text());
+    const data = await r.json();
+    if(!data.ok){
+      toast(data.error==='wrong_password' ? 'Mevcut şifre hatalı.' : 'Şifre en az 6 karakter olmalı.', true);
+      return;
+    }
+    toast('✓ Şifreniz güncellendi.');
+  } catch(e){
+    toast('Şifre değiştirilemedi: '+(e&&e.message?String(e.message).slice(0,160):'bilinmeyen hata'), true);
+  }
 }
 function hakkinda(){alert('MMK Veresiye Kısayolları:\n\nF3 — Tarih Seçimli Günlük Rapor\nF4 — Yedekleme & Geri Yükleme Paneli\nF5 — Borç Girişi (Detayda)\nF6 — Tahsilat Girişi (Detayda)\nESC — Kapat / Gizle\nENTER — Kaydet / Geçiş\nOk Tuşları ↑↓ — Listede gezinme');}
 
