@@ -152,7 +152,18 @@
         <button class="logout" id="logoutBtn">Çıkış yap</button>
       </div>
     </header>
-
+    
+  <section class="box">
+        <h2>Hesap ayarları</h2>
+        <p class="hint">Kendi yönetici kullanıcı adınızı ve/veya şifrenizi değiştirin.</p>
+        <form id="accForm" novalidate>
+          <div class="grid3">
+            <div class="field"><label for="accUser">Yeni kullanıcı adı</label><input id="accUser" type="text" autocapitalize="none" autocomplete="off" placeholder="Boş bırakabilirsiniz"></div>
+            <div class="field"><label for="accPass">Yeni parola (en az 6 karakter)</label><input id="accPass" type="text" autocomplete="off" placeholder="Boş bırakabilirsiniz"></div>
+            <button id="accBtn" class="btn dark" type="submit">Kaydet</button>
+          </div>
+        </form>
+      </section>
     <main>
       <section class="stats">
         <div class="stat"><div class="l">Toplam müşteri</div><div class="v" id="statTotal">0</div></div>
@@ -175,19 +186,7 @@
           </div>
         </form>
       </section>
-
-      <section class="box">
-        <h2>Hesap ayarları</h2>
-        <p class="hint">Kendi yönetici kullanıcı adınızı ve/veya şifrenizi değiştirin.</p>
-        <form id="accForm" novalidate>
-          <div class="grid3">
-            <div class="field"><label for="accUser">Yeni kullanıcı adı</label><input id="accUser" type="text" autocapitalize="none" autocomplete="off" placeholder="Boş bırakabilirsiniz"></div>
-            <div class="field"><label for="accPass">Yeni parola (en az 6 karakter)</label><input id="accPass" type="text" autocomplete="off" placeholder="Boş bırakabilirsiniz"></div>
-            <button id="accBtn" class="btn dark" type="submit">Kaydet</button>
-          </div>
-        </form>
-      </section>
-
+    
       <section class="box">
         <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px;">
           <h2 style="margin:0;">Müşteriler</h2>
